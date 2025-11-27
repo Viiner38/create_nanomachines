@@ -17,18 +17,20 @@ public class ModItemModelProvider extends ItemModelProvider {
             super(output, Nanomachines.MOD_ID, existingFileHelper);
         }
 
+
+
         @Override
         protected void registerModels() {
             handheldItem(ModItems.HF_MURASAMA);
 
-
-
-
         }
+
+
+
 
     private ItemModelBuilder handheldItem(RegistryObject<Item> item) {
         return withExistingParent(item.getId().getPath(),
-                ResourceLocation.parse("minecraft:item/handheld")).texture("layer0",
+                ResourceLocation.parse("item/handheld")).texture("layer0",
                 ResourceLocation.fromNamespaceAndPath(Nanomachines.MOD_ID,"item/" + item.getId().getPath()));
     }
 

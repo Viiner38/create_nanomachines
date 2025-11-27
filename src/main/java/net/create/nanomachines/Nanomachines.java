@@ -22,27 +22,25 @@ public class Nanomachines
     // Define mod id in a common place for everything to reference
     public static final String MOD_ID = "create_nanomachines";
     // Directly reference a slf4j logger
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
 
     public Nanomachines(FMLJavaModLoadingContext context)
     {
-        IEventBus modEventBus = context.getModEventBus();
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ModCreativeModTabs.register(modEventBus);
         ModItems.register(modEventBus);
 
 
+
+
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
-
-
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
-
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
-
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
