@@ -1,6 +1,8 @@
 package net.create.nanomachines;
 
 import com.mojang.logging.LogUtils;
+import net.create.nanomachines.datagen.ModItemModelProvider;
+import net.create.nanomachines.item.ModArmorMaterials;
 import net.create.nanomachines.item.ModCreativeModTabs;
 import net.create.nanomachines.item.ModItems;
 import net.minecraft.world.level.block.Blocks;
@@ -14,14 +16,10 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
 
-
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(Nanomachines.MOD_ID)
 public class Nanomachines
 {
-    // Define mod id in a common place for everything to reference
     public static final String MOD_ID = "create_nanomachines";
-    // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
 
 
@@ -33,21 +31,18 @@ public class Nanomachines
         ModItems.register(modEventBus);
 
 
-
-
-        // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
-        // Register ourselves for server and other game events we are interested in
+
         MinecraftForge.EVENT_BUS.register(this);
-        // Register the item to a creative tab
+
         modEventBus.addListener(this::addCreative);
-        // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
+
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-        // Some common setup code
+
         LOGGER.info("HELLO FROM COMMON SETUP");
 
         if (Config.logDirtBlock)
@@ -58,7 +53,6 @@ public class Nanomachines
         Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
     }
 
-    // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
 

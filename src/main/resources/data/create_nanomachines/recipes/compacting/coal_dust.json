@@ -1,0 +1,13 @@
+{
+  "type": "create:compacting",
+  "ingredients": [
+    {"item": "create_nanomachines:coal_dust"},
+    {"item": "create_nanomachines:coal_dust"}
+  ],
+  "results": [
+    {
+      "item": "minecraft:coal",
+      "count": 1
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "type": "create:milling",
+  "conditions": [
+    { "type": "forge:false" }
+  ],
+  "ingredients": [
+    { "item": "minecraft:coal" }
+  ],
+  "results": [
+    { "item": "minecraft:black_dye" }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "type": "create:pressing",
+  "ingredients": [
+    {"item": "create_nanomachines:steel_ingot"}
+  ],
+  "results": [
+    {
+      "item": "create_nanomachines:steel_sheet",
+      "count": 1
+    }
+  ]
+}

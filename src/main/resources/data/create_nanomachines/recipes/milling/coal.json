@@ -1,0 +1,13 @@
+{
+  "type": "create:milling",
+  "ingredients": [
+    { "item": "minecraft:coal" }
+  ],
+  "results": [
+    {
+      "item": "create_nanomachines:coal_dust",
+      "count": 2
+    }
+  ],
+  "processingTime": 300
+}

@@ -1,5 +1,22 @@
 {
-  "item.create_nanomachines.hf_murasama": "HF Murasama",
-  "creativetab.nanomachines_tab": "Create: Nanomachines"
+  "item.create_nanomachines.hf_murasama": "Murasama",
 
+  "item.create_nanomachines.coal_dust": "Coal Dust",
+  "item.create_nanomachines.steel_ingot": "Steel Ingot",
+
+  "item.create_nanomachines.steel_pickaxe": "Steel Pickaxe",
+  "item.create_nanomachines.steel_sword": "Steel Sword",
+  "item.create_nanomachines.steel_shovel": "Steel Shovel",
+  "item.create_nanomachines.steel_hoe": "Steel Hoe",
+  "item.create_nanomachines.steel_axe": "Steel Axe",
+
+  "item.create_nanomachines.steel_helmet": "Steel Helmet",
+  "item.create_nanomachines.steel_chestplate": "Steel Chestplate",
+  "item.create_nanomachines.steel_leggings": "Steel Leggings",
+  "item.create_nanomachines.steel_boots": "Steel Boots",
+  "item.create_nanomachines.steel_sheet": "Steel Sheet",
+  "item.create_nanomachines.hf_motor": "High Frequency Motor",
+  "item.create_nanomachines.hf_handle": "High Frequency Blade Handle",
+
+  "creativetab.nanomachines_tab": "Create: Nanomachines"
 }

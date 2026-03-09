@@ -1,0 +1,16 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    { "item": "minecraft:iron_ingot" },
+    { "item": "create_nanomachines:coal_dust" },
+    { "item": "create_nanomachines:coal_dust" }
+  ],
+  "results": [
+    {
+      "item": "create_nanomachines:steel_ingot",
+      "count": 1
+    }
+  ],
+  "processingTime": 400,
+  "heatRequirement": "heated"
+}

@@ -20,11 +20,25 @@ public class ModCreativeModTabs {
 
                         output.accept(ModItems.HF_MURASAMA.get());
 
+                        output.accept(ModItems.NANOMACHINES_COALDUST.get());
+                        output.accept(ModItems.NANOMACHINES_STEEL.get());
+                        output.accept(ModItems.NANOMACHINES_STEELSHEET.get());
+
+                        output.accept(ModItems.NANOMACHINES_STEELPICKAXE.get());
+                        output.accept(ModItems.NANOMACHINES_STEELAXE.get());
+                        output.accept(ModItems.NANOMACHINES_STEELSHOVEL.get());
+                        output.accept(ModItems.NANOMACHINES_STEELHOE.get());
+                        output.accept(ModItems.NANOMACHINES_STEELSWORD.get());
+
+                        output.accept(ModItems.NANOMACHINES_STEELHELMET.get());
+                        output.accept(ModItems.NANOMACHINES_STEELCHESTPLATE.get());
+                        output.accept(ModItems.NANOMACHINES_STEELLEGGINGS.get());
+                        output.accept(ModItems.NANOMACHINES_STEELBOOTS.get());
+                        output.accept(ModItems.NANOMACHINES_HFMOTOR.get());
+                        output.accept(ModItems.NANOMACHINES_HFHANDLE.get());
+
                     })
                     .build());
-
-
-
 
     public static void register(IEventBus eventBus) {
         CREATIVE_MODE_TABS.register(eventBus);
