@@ -1,10 +1,12 @@
 package net.create.nanomachines;
 
 import com.mojang.logging.LogUtils;
+import net.create.nanomachines.block.ModBlocks;
 import net.create.nanomachines.datagen.ModItemModelProvider;
 import net.create.nanomachines.item.ModArmorMaterials;
 import net.create.nanomachines.item.ModCreativeModTabs;
 import net.create.nanomachines.item.ModItems;
+import net.create.nanomachines.item.ModParticles;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -29,7 +31,8 @@ public class Nanomachines
 
         ModCreativeModTabs.register(modEventBus);
         ModItems.register(modEventBus);
-
+        ModParticles.register(modEventBus);
+        ModBlocks.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 

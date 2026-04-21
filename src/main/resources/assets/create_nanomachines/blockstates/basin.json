@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "create_nanomachines:block/bloomery/block"
+    },
+    "facing=east": {
+      "model": "create_nanomachines:block/bloomery/block_directional",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "create_nanomachines:block/bloomery/block_directional",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "create_nanomachines:block/bloomery/block_directional"
+    },
+    "facing=west": {
+      "model": "create_nanomachines:block/bloomery/block_directional",
+      "y": 90
+    }
+  }
+}

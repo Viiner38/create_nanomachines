@@ -1,6 +1,7 @@
 package net.create.nanomachines.item;
 
 import net.create.nanomachines.Nanomachines;
+import net.create.nanomachines.block.ModBlocks;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -36,6 +37,11 @@ public class ModCreativeModTabs {
                         output.accept(ModItems.NANOMACHINES_STEELBOOTS.get());
                         output.accept(ModItems.NANOMACHINES_HFMOTOR.get());
                         output.accept(ModItems.NANOMACHINES_HFHANDLE.get());
+                        output.accept(ModItems.NANOMACHINES_HFBLADE.get());
+                        output.accept(ModItems.NANOMACHINES_HEART.get());
+
+                        output.accept(ModBlocks.BLOOMERY.get());
+
 
                     })
                     .build());
