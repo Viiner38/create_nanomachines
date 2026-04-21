@@ -1,0 +1,28 @@
+{
+  "type": "create:mechanical_crafting",
+  "acceptMirrored": true,
+  "pattern": [
+    "  X ",
+    " SMX",
+    "XES ",
+    " X  "
+  ],
+  "key": {
+    "X": {
+      "item": "create:sturdy_sheet"
+    },
+    "S": {
+      "item": "create_nanomachines:steel_sheet"
+    },
+    "M": {
+      "item": "create_nanomachines:hf_motor"
+    },
+    "E": {
+      "item": "create:electron_tube"
+    }
+  },
+  "result": {
+    "item": "create_nanomachines:hf_handle",
+    "count": 1
+  }
+}

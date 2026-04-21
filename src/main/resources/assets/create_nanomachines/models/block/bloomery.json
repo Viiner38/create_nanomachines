@@ -1,58 +1,6 @@
 {
-  "credit": "Made with Blockbench",
-  "parent": "block/block",
+  "parent": "minecraft:block/cube_all",
   "textures": {
-    "bloomery": "create_nanomachines:block/bloomery",
-    "particle": "create:block/industrial_iron_block"
-  },
-  "elements": [
-    {
-      "name": "Bloomery",
-      "from": [0, 2, 0],
-      "to": [16, 16, 16],
-      "faces": {
-        "north": {"uv": [0, 0, 8, 7], "texture": "bloomery"},
-        "east": {"uv": [0, 0, 8, 7], "texture": "bloomery"},
-        "south": {"uv": [0, 0, 8, 7], "texture": "bloomery"},
-        "west": {"uv": [0, 0, 8, 7], "texture": "bloomery"},
-        "up": {"uv": [0, 8, 8, 16], "texture": "bloomery"},
-        "down": {"uv": [0, 8, 8, 16], "texture": "bloomery"}
-      }
-    },
-    {
-      "name": "Bloomery Interior",
-      "from": [1.95, 16, 1.95],
-      "to": [14.05, 2, 14.05],
-      "faces": {
-        "north": {"uv": [9, 0, 15, 7], "rotation": 180, "texture": "bloomery"},
-        "east": {"uv": [9, 0, 15, 7], "rotation": 180, "texture": "bloomery"},
-        "south": {"uv": [9, 0, 15, 7], "rotation": 180, "texture": "bloomery"},
-        "west": {"uv": [9, 0, 15, 7], "rotation": 180, "texture": "bloomery"},
-        "up": {"uv": [9, 9, 15, 15], "rotation": 90, "texture": "bloomery"}
-      }
-    },
-    {
-      "name": "Bloomery Base",
-      "from": [2, 0, 2],
-      "to": [14, 2, 14],
-      "faces": {
-        "north": {"uv": [1, 7, 7, 8], "texture": "bloomery"},
-        "east": {"uv": [1, 7, 7, 8], "texture": "bloomery"},
-        "south": {"uv": [1, 7, 7, 8], "texture": "bloomery"},
-        "west": {"uv": [1, 7, 7, 8], "texture": "bloomery"},
-        "down": {"uv": [9, 9, 15, 15], "texture": "bloomery"}
-      }
-    }
-  ],
-  "groups": [
-    {
-      "name": "Bloomery",
-      "origin": [8, 8, 8],
-      "color": 0,
-      "children": []
-    },
-    0,
-    1,
-    2
-  ]
+    "all": "tutorialmod:block/sapphire_block"
+  }
 }
