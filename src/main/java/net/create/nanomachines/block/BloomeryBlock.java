@@ -1,6 +1,8 @@
 package net.create.nanomachines.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -21,12 +23,36 @@ public class BloomeryBlock extends Block {
     public static final EnumProperty<BowlPart> PART =
             EnumProperty.create("part", BowlPart.class);
 
-    private static final VoxelShape SHAPE = Shapes.or(
+    private static final VoxelShape SINGLE_SHAPE = Shapes.or(
             Block.box(0, 2, 0, 16, 16, 2),
             Block.box(0, 2, 14, 16, 16, 16),
             Block.box(0, 2, 2, 2, 16, 14),
             Block.box(14, 2, 2, 16, 16, 14),
             Block.box(2, 0, 2, 14, 2, 14)
+    );
+
+    private static final VoxelShape NW_SHAPE = Shapes.or(
+            Block.box(0, 2, 0, 16, 16, 2),   // north wall
+            Block.box(0, 2, 2, 2, 16, 16),   // west wall
+            Block.box(2, 0, 2, 16, 2, 16)    // floor
+    );
+
+    private static final VoxelShape NE_SHAPE = Shapes.or(
+            Block.box(0, 2, 0, 16, 16, 2),   // north wall
+            Block.box(14, 2, 2, 16, 16, 16), // east wall
+            Block.box(0, 0, 2, 14, 2, 16)    // floor
+    );
+
+    private static final VoxelShape SW_SHAPE = Shapes.or(
+            Block.box(0, 2, 14, 16, 16, 16), // south wall
+            Block.box(0, 2, 0, 2, 16, 14),   // west wall
+            Block.box(2, 0, 0, 16, 2, 14)    // floor
+    );
+
+    private static final VoxelShape SE_SHAPE = Shapes.or(
+            Block.box(0, 2, 14, 16, 16, 16), // south wall
+            Block.box(14, 2, 0, 16, 16, 14), // east wall
+            Block.box(0, 0, 0, 14, 2, 14)    // floor
     );
 
     public BloomeryBlock(BlockBehaviour.Properties properties) {
@@ -45,8 +71,8 @@ public class BloomeryBlock extends Block {
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
 
-        if (!level.isClientSide) {
-            refreshAround(level, pos);
+        if (!level.isClientSide && state.getBlock() != oldState.getBlock()) {
+            scheduleRefresh(level, pos);
         }
     }
 
@@ -55,16 +81,35 @@ public class BloomeryBlock extends Block {
         super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
 
         if (!level.isClientSide) {
-            refreshAround(level, pos);
+            scheduleRefresh(level, pos);
         }
     }
 
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        boolean changedBlock = state.getBlock() != newState.getBlock();
         super.onRemove(state, level, pos, newState, movedByPiston);
 
-        if (!level.isClientSide && state.getBlock() != newState.getBlock()) {
-            refreshAround(level, pos);
+        if (!level.isClientSide && changedBlock) {
+            scheduleRefresh(level, pos);
+        }
+    }
+
+    @Override
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        refreshAround(level, pos);
+    }
+
+    private void scheduleRefresh(Level level, BlockPos center) {
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                BlockPos checkPos = center.offset(x, 0, z);
+                BlockState checkState = level.getBlockState(checkPos);
+
+                if (checkState.getBlock() instanceof BloomeryBlock) {
+                    level.scheduleTick(checkPos, this, 1);
+                }
+            }
         }
     }
 
@@ -159,10 +204,30 @@ public class BloomeryBlock extends Block {
         }
     }
 
+    private VoxelShape getCurrentShape(BlockState state) {
+        if (state.getValue(STRUCTURE) != StructureType.BOWL_2X2) {
+            return SINGLE_SHAPE;
+        }
+
+        return switch (state.getValue(PART)) {
+            case NW -> NW_SHAPE;
+            case NE -> NE_SHAPE;
+            case SW -> SW_SHAPE;
+            case SE -> SE_SHAPE;
+            default -> SINGLE_SHAPE;
+        };
+    }
+
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return getCurrentShape(state);
     }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return getCurrentShape(state);
+    }
+
 
     public enum StructureType implements StringRepresentable {
         SINGLE("single"),
