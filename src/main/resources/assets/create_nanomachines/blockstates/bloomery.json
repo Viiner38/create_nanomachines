@@ -1,8 +1,24 @@
 {
-  "variants":
-{
-  "":
-  {"model":"create_nanomachines:block/bloomery"
+  "variants": {
+    "structure=single,part=none": {
+      "model": "create_nanomachines:block/bloomery"
+    },
+
+    "structure=bowl_2x2,part=nw": {
+      "model": "create_nanomachines:block/bloomery_bowl_2x2",
+      "y": 0
+    },
+    "structure=bowl_2x2,part=ne": {
+      "model": "create_nanomachines:block/bloomery_bowl_2x2",
+      "y": 90
+    },
+    "structure=bowl_2x2,part=se": {
+      "model": "create_nanomachines:block/bloomery_bowl_2x2",
+      "y": 180
+    },
+    "structure=bowl_2x2,part=sw": {
+      "model": "create_nanomachines:block/bloomery_bowl_2x2",
+      "y": 270
     }
   }
 }
