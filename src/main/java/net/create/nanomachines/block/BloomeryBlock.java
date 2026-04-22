@@ -40,28 +40,50 @@ public class BloomeryBlock extends Block {
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(STRUCTURE, PART);
     }
+
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
 
-        if (level.isClientSide) {
-            return;
+        if (!level.isClientSide) {
+            refreshAround(level, pos);
         }
-
-        updateForm(level, pos);
     }
 
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
         super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
 
-        if (level.isClientSide) {
-            return;
+        if (!level.isClientSide) {
+            refreshAround(level, pos);
         }
-
-        updateForm(level, pos);
     }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        super.onRemove(state, level, pos, newState, movedByPiston);
+
+        if (!level.isClientSide && state.getBlock() != newState.getBlock()) {
+            refreshAround(level, pos);
+        }
+    }
+
+    private void refreshAround(Level level, BlockPos center) {
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                BlockPos checkPos = center.offset(x, 0, z);
+                BlockState checkState = level.getBlockState(checkPos);
+
+                if (checkState.getBlock() instanceof BloomeryBlock) {
+                    updateForm(level, checkPos);
+                }
+            }
+        }
+    }
+
     private void updateForm(Level level, BlockPos pos) {
+        clearSingle(level, pos);
+
         BlockPos[] possibleOrigins = new BlockPos[] {
                 pos,
                 pos.west(),
@@ -75,8 +97,6 @@ public class BloomeryBlock extends Block {
                 return;
             }
         }
-
-        clearForm(level, pos);
     }
 
     private boolean canForm2x2(Level level, BlockPos origin) {
@@ -96,10 +116,49 @@ public class BloomeryBlock extends Block {
     }
 
     private void apply2x2(Level level, BlockPos origin) {
+        BlockPos nw = origin;
+        BlockPos ne = origin.east();
+        BlockPos sw = origin.south();
+        BlockPos se = origin.south().east();
+
+        setPart(level, nw, BowlPart.NW);
+        setPart(level, ne, BowlPart.NE);
+        setPart(level, sw, BowlPart.SW);
+        setPart(level, se, BowlPart.SE);
     }
 
-    private void clearForm(Level level, BlockPos pos) {
+    private void setPart(Level level, BlockPos pos, BowlPart part) {
+        BlockState state = level.getBlockState(pos);
+
+        if (!(state.getBlock() instanceof BloomeryBlock)) {
+            return;
+        }
+
+        BlockState newState = state
+                .setValue(STRUCTURE, StructureType.BOWL_2X2)
+                .setValue(PART, part);
+
+        if (state != newState) {
+            level.setBlock(pos, newState, 3);
+        }
     }
+
+    private void clearSingle(Level level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+
+        if (!(state.getBlock() instanceof BloomeryBlock)) {
+            return;
+        }
+
+        BlockState newState = state
+                .setValue(STRUCTURE, StructureType.SINGLE)
+                .setValue(PART, BowlPart.NONE);
+
+        if (state != newState) {
+            level.setBlock(pos, newState, 3);
+        }
+    }
+
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
