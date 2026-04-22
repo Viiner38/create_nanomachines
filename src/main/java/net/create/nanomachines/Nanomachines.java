@@ -17,7 +17,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
-
+import net.create.nanomachines.block.entity.ModBlockEntities;
 @Mod(Nanomachines.MOD_ID)
 public class Nanomachines
 {
@@ -33,6 +33,7 @@ public class Nanomachines
         ModItems.register(modEventBus);
         ModParticles.register(modEventBus);
         ModBlocks.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 

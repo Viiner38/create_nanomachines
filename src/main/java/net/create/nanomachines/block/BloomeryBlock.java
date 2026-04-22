@@ -14,8 +14,11 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-public class BloomeryBlock extends Block {
+import net.create.nanomachines.block.entity.BloomeryBlockEntity;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.EntityBlock;
+public class BloomeryBlock extends Block implements EntityBlock {
 
     public static final EnumProperty<StructureType> STRUCTURE =
             EnumProperty.create("structure", StructureType.class);
@@ -65,6 +68,10 @@ public class BloomeryBlock extends Block {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(STRUCTURE, PART);
+    }
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new BloomeryBlockEntity(pos, state);
     }
 
     @Override
