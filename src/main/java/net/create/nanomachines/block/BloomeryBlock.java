@@ -20,7 +20,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.EntityBlock;
 import net.create.nanomachines.block.entity.BloomeryBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-
+import net.create.nanomachines.block.entity.BloomeryBlockEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 
 public class BloomeryBlock extends Block implements EntityBlock {
@@ -30,6 +35,8 @@ public class BloomeryBlock extends Block implements EntityBlock {
 
     public static final EnumProperty<BowlPart> PART =
             EnumProperty.create("part", BowlPart.class);
+
+    public static final IntegerProperty FILL = IntegerProperty.create("fill", 0, 16);
 
     private static final VoxelShape SINGLE_SHAPE = Shapes.or(
             Block.box(0, 2, 0, 16, 16, 2),
