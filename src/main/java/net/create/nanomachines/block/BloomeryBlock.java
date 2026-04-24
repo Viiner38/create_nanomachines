@@ -14,32 +14,14 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.create.nanomachines.block.entity.BloomeryBlockEntity;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.EntityBlock;
-import net.create.nanomachines.block.entity.BloomeryBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.create.nanomachines.block.entity.BloomeryBlockEntity;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
-public class BloomeryBlock extends Block implements EntityBlock {
+public class BloomeryBlock extends Block {
 
     public static final EnumProperty<StructureType> STRUCTURE =
             EnumProperty.create("structure", StructureType.class);
 
     public static final EnumProperty<BowlPart> PART =
             EnumProperty.create("part", BowlPart.class);
-
-    public static final IntegerProperty FILL = IntegerProperty.create("fill", 0, 16);
 
     private static final VoxelShape SINGLE_SHAPE = Shapes.or(
             Block.box(0, 2, 0, 16, 16, 2),
@@ -83,50 +65,6 @@ public class BloomeryBlock extends Block implements EntityBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(STRUCTURE, PART);
-    }
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new BloomeryBlockEntity(pos, state);
-    }
-
-    @Override
-    public void updateEntityAfterFallOn(BlockGetter world, Entity entity) {
-        super.updateEntityAfterFallOn(world, entity);
-
-        if (!(world instanceof Level level) || level.isClientSide) {
-            return;
-        }
-
-        if (!(entity instanceof ItemEntity itemEntity) || !itemEntity.isAlive()) {
-            return;
-        }
-
-        BlockPos pos = itemEntity.blockPosition();
-        if (!level.getBlockState(pos).is(this)) {
-            return;
-        }
-
-        ItemStack stack = itemEntity.getItem();
-        if (!stack.is(Items.CHARCOAL)) {
-            return;
-        }
-
-        BloomeryBlockEntity be = getBloomeryBlockEntity(level, pos);
-        if (be == null) {
-            return;
-        }
-
-        int inserted = be.insertCharcoal(stack.getCount(), false);
-        if (inserted <= 0) {
-            return;
-        }
-
-        stack.shrink(inserted);
-        if (stack.isEmpty()) {
-            itemEntity.discard();
-        } else {
-            itemEntity.setItem(stack);
-        }
     }
 
     @Override
@@ -221,58 +159,17 @@ public class BloomeryBlock extends Block implements EntityBlock {
     private boolean isBloomery(Level level, BlockPos pos) {
         return level.getBlockState(pos).getBlock() instanceof BloomeryBlock;
     }
-    private BloomeryBlockEntity getBloomeryBlockEntity(Level level, BlockPos pos) {
-        BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof BloomeryBlockEntity bloomeryBlockEntity) {
-            return bloomeryBlockEntity;
-        }
-        return null;
-    }
 
-    private int getStoredCharcoal(Level level, BlockPos pos) {
-        BloomeryBlockEntity be = getBloomeryBlockEntity(level, pos);
-        return be != null ? be.getCharcoalAmount() : 0;
-    }
-
-    private void setController(Level level, BlockPos pos, BlockPos controllerPos) {
-        BloomeryBlockEntity be = getBloomeryBlockEntity(level, pos);
-        if (be != null) {
-            be.syncController(controllerPos);
-        }
-    }
-
-    private void setStoredCharcoal(Level level, BlockPos pos, int amount) {
-        BloomeryBlockEntity be = getBloomeryBlockEntity(level, pos);
-        if (be != null) {
-            be.setRawCharcoalAmount(amount);
-        }
-    }
     private void apply2x2(Level level, BlockPos origin) {
         BlockPos nw = origin;
         BlockPos ne = origin.east();
         BlockPos sw = origin.south();
         BlockPos se = origin.south().east();
 
-        int totalCharcoal =
-                getStoredCharcoal(level, nw) +
-                        getStoredCharcoal(level, ne) +
-                        getStoredCharcoal(level, sw) +
-                        getStoredCharcoal(level, se);
-
         setPart(level, nw, BowlPart.NW);
         setPart(level, ne, BowlPart.NE);
         setPart(level, sw, BowlPart.SW);
         setPart(level, se, BowlPart.SE);
-
-        setController(level, nw, nw);
-        setController(level, ne, nw);
-        setController(level, sw, nw);
-        setController(level, se, nw);
-
-        setStoredCharcoal(level, nw, totalCharcoal);
-        setStoredCharcoal(level, ne, 0);
-        setStoredCharcoal(level, sw, 0);
-        setStoredCharcoal(level, se, 0);
     }
 
     private void setPart(Level level, BlockPos pos, BowlPart part) {
@@ -304,11 +201,6 @@ public class BloomeryBlock extends Block implements EntityBlock {
 
         if (state != newState) {
             level.setBlock(pos, newState, 3);
-        }
-
-        BloomeryBlockEntity be = getBloomeryBlockEntity(level, pos);
-        if (be != null) {
-            be.syncController(pos);
         }
     }
 
