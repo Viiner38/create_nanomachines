@@ -26,7 +26,10 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class BloomeryBlock extends Block implements EntityBlock {
 
@@ -84,6 +87,46 @@ public class BloomeryBlock extends Block implements EntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new BloomeryBlockEntity(pos, state);
+    }
+
+    @Override
+    public void updateEntityAfterFallOn(BlockGetter world, Entity entity) {
+        super.updateEntityAfterFallOn(world, entity);
+
+        if (!(world instanceof Level level) || level.isClientSide) {
+            return;
+        }
+
+        if (!(entity instanceof ItemEntity itemEntity) || !itemEntity.isAlive()) {
+            return;
+        }
+
+        BlockPos pos = itemEntity.blockPosition();
+        if (!level.getBlockState(pos).is(this)) {
+            return;
+        }
+
+        ItemStack stack = itemEntity.getItem();
+        if (!stack.is(Items.CHARCOAL)) {
+            return;
+        }
+
+        BloomeryBlockEntity be = getBloomeryBlockEntity(level, pos);
+        if (be == null) {
+            return;
+        }
+
+        int inserted = be.insertCharcoal(stack.getCount(), false);
+        if (inserted <= 0) {
+            return;
+        }
+
+        stack.shrink(inserted);
+        if (stack.isEmpty()) {
+            itemEntity.discard();
+        } else {
+            itemEntity.setItem(stack);
+        }
     }
 
     @Override
@@ -261,6 +304,11 @@ public class BloomeryBlock extends Block implements EntityBlock {
 
         if (state != newState) {
             level.setBlock(pos, newState, 3);
+        }
+
+        BloomeryBlockEntity be = getBloomeryBlockEntity(level, pos);
+        if (be != null) {
+            be.syncController(pos);
         }
     }
 

@@ -4,6 +4,9 @@ import net.create.nanomachines.block.BloomeryBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -13,6 +16,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.Nullable;
 
 public class BloomeryBlockEntity extends BlockEntity {
 
@@ -64,17 +68,11 @@ public class BloomeryBlockEntity extends BlockEntity {
         }
     };
 
-    private LazyOptional<IItemHandler> itemCapability = LazyOptional.empty();
+    private final LazyOptional<IItemHandler> itemCapability = LazyOptional.of(() -> inputHandler);
 
     public BloomeryBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.BLOOMERY.get(), pos, state);
         this.controllerPos = pos;
-    }
-
-    @Override
-    public void onLoad() {
-        super.onLoad();
-        itemCapability = LazyOptional.of(() -> inputHandler);
     }
 
     @Override
@@ -84,7 +82,7 @@ public class BloomeryBlockEntity extends BlockEntity {
     }
 
     @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return itemCapability.cast();
         }
@@ -115,12 +113,16 @@ public class BloomeryBlockEntity extends BlockEntity {
     public void syncController(BlockPos newControllerPos) {
         if (!newControllerPos.equals(this.controllerPos)) {
             this.controllerPos = newControllerPos;
-            setChanged();
+            notifySelfUpdate();
         }
     }
 
     public int getCharcoalAmount() {
         return charcoalAmount;
+    }
+
+    public int getTotalCharcoalAmount() {
+        return getController().charcoalAmount;
     }
 
     public int getCapacity() {
@@ -138,7 +140,7 @@ public class BloomeryBlockEntity extends BlockEntity {
 
     public float getFillFraction() {
         int capacity = getCapacity();
-        return capacity <= 0 ? 0.0f : (float) getController().charcoalAmount / (float) capacity;
+        return capacity <= 0 ? 0.0f : (float) getTotalCharcoalAmount() / (float) capacity;
     }
 
     public int getVisualLevel16() {
@@ -156,60 +158,58 @@ public class BloomeryBlockEntity extends BlockEntity {
 
         if (inserted > 0 && !simulate) {
             controller.charcoalAmount += inserted;
-            controller.setChanged();
-            controller.syncFillToBlocks();
+            controller.syncVisuals();
         }
 
         return inserted;
     }
 
     public void setRawCharcoalAmount(int amount) {
-        this.charcoalAmount = Math.max(0, amount);
-        setChanged();
-
-        if (level != null && !level.isClientSide) {
-            syncFillToBlocks();
+        int clamped = Math.max(0, amount);
+        if (this.charcoalAmount != clamped) {
+            this.charcoalAmount = clamped;
+            syncVisuals();
         }
     }
 
-    public void syncFillToBlocks() {
+    private void notifySelfUpdate() {
+        setChanged();
+
         if (level == null || level.isClientSide) {
             return;
         }
 
-        BloomeryBlockEntity controller = getController();
-        BlockState controllerState = controller.getBlockState();
-
-        if (!(controllerState.getBlock() instanceof BloomeryBlock)) {
-            return;
-        }
-
-        int fill = controller.getVisualLevel16();
-
-        if (controllerState.getValue(BloomeryBlock.STRUCTURE) == BloomeryBlock.StructureType.BOWL_2X2) {
-            BlockPos origin = controller.getBlockPos();
-            setFillOnBlock(origin, fill);
-            setFillOnBlock(origin.east(), fill);
-            setFillOnBlock(origin.south(), fill);
-            setFillOnBlock(origin.south().east(), fill);
-            return;
-        }
-
-        setFillOnBlock(controller.getBlockPos(), fill);
+        BlockState state = getBlockState();
+        level.sendBlockUpdated(worldPosition, state, state, 3);
     }
 
-    private void setFillOnBlock(BlockPos pos, int fill) {
+    private void syncVisuals() {
+        setChanged();
+
+        if (level == null || level.isClientSide) {
+            return;
+        }
+
+        sendUpdateIfBloomery(worldPosition);
+
+        BlockState state = getBlockState();
+        if (!(state.getBlock() instanceof BloomeryBlock)) {
+            return;
+        }
+
+        if (isController() && state.getValue(BloomeryBlock.STRUCTURE) == BloomeryBlock.StructureType.BOWL_2X2) {
+            BlockPos origin = getBlockPos();
+            sendUpdateIfBloomery(origin.east());
+            sendUpdateIfBloomery(origin.south());
+            sendUpdateIfBloomery(origin.south().east());
+        }
+    }
+
+    private void sendUpdateIfBloomery(BlockPos pos) {
         BlockState state = level.getBlockState(pos);
-
-        if (!(state.getBlock() instanceof BloomeryBlock) || !state.hasProperty(BloomeryBlock.FILL)) {
-            return;
+        if (state.getBlock() instanceof BloomeryBlock) {
+            level.sendBlockUpdated(pos, state, state, 3);
         }
-
-        if (state.getValue(BloomeryBlock.FILL) == fill) {
-            return;
-        }
-
-        level.setBlock(pos, state.setValue(BloomeryBlock.FILL, fill), 3);
     }
 
     @Override
@@ -226,5 +226,21 @@ public class BloomeryBlockEntity extends BlockEntity {
         controllerPos = tag.contains("ControllerPos")
                 ? BlockPos.of(tag.getLong("ControllerPos"))
                 : worldPosition;
+    }
+
+    @Override
+    public CompoundTag getUpdateTag() {
+        return saveWithoutMetadata();
+    }
+
+    @Nullable
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag) {
+        load(tag);
     }
 }
