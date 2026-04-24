@@ -74,6 +74,23 @@ public class BloomeryBlockEntity extends BlockEntity {
     public int getVisualLevel16() {
         return Mth.clamp(Mth.ceil(getFillFraction() * 16.0f), 0, 16);
     }
+    public void setRawCharcoalAmount(int amount) {
+        this.charcoalAmount = Math.max(0, amount);
+        setChanged();
+
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+    }
+
+    public void syncController(BlockPos controllerPos) {
+        this.controllerPos = controllerPos;
+        setChanged();
+
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+    }
 
     @Override
     protected void saveAdditional(CompoundTag tag) {

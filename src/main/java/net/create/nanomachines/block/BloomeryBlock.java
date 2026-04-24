@@ -18,6 +18,11 @@ import net.create.nanomachines.block.entity.BloomeryBlockEntity;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.EntityBlock;
+import net.create.nanomachines.block.entity.BloomeryBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+
+
 public class BloomeryBlock extends Block implements EntityBlock {
 
     public static final EnumProperty<StructureType> STRUCTURE =
@@ -166,17 +171,58 @@ public class BloomeryBlock extends Block implements EntityBlock {
     private boolean isBloomery(Level level, BlockPos pos) {
         return level.getBlockState(pos).getBlock() instanceof BloomeryBlock;
     }
+    private BloomeryBlockEntity getBloomeryBlockEntity(Level level, BlockPos pos) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof BloomeryBlockEntity bloomeryBlockEntity) {
+            return bloomeryBlockEntity;
+        }
+        return null;
+    }
 
+    private int getStoredCharcoal(Level level, BlockPos pos) {
+        BloomeryBlockEntity be = getBloomeryBlockEntity(level, pos);
+        return be != null ? be.getCharcoalAmount() : 0;
+    }
+
+    private void setController(Level level, BlockPos pos, BlockPos controllerPos) {
+        BloomeryBlockEntity be = getBloomeryBlockEntity(level, pos);
+        if (be != null) {
+            be.syncController(controllerPos);
+        }
+    }
+
+    private void setStoredCharcoal(Level level, BlockPos pos, int amount) {
+        BloomeryBlockEntity be = getBloomeryBlockEntity(level, pos);
+        if (be != null) {
+            be.setRawCharcoalAmount(amount);
+        }
+    }
     private void apply2x2(Level level, BlockPos origin) {
         BlockPos nw = origin;
         BlockPos ne = origin.east();
         BlockPos sw = origin.south();
         BlockPos se = origin.south().east();
 
+        int totalCharcoal =
+                getStoredCharcoal(level, nw) +
+                        getStoredCharcoal(level, ne) +
+                        getStoredCharcoal(level, sw) +
+                        getStoredCharcoal(level, se);
+
         setPart(level, nw, BowlPart.NW);
         setPart(level, ne, BowlPart.NE);
         setPart(level, sw, BowlPart.SW);
         setPart(level, se, BowlPart.SE);
+
+        setController(level, nw, nw);
+        setController(level, ne, nw);
+        setController(level, sw, nw);
+        setController(level, se, nw);
+
+        setStoredCharcoal(level, nw, totalCharcoal);
+        setStoredCharcoal(level, ne, 0);
+        setStoredCharcoal(level, sw, 0);
+        setStoredCharcoal(level, se, 0);
     }
 
     private void setPart(Level level, BlockPos pos, BowlPart part) {
