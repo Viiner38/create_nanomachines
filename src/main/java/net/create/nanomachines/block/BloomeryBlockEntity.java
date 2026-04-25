@@ -15,42 +15,27 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BloomeryBlockEntity extends SmartBlockEntity {
 
-    // ---------------------------------------------------------------
-    // Charcoal storage
-    // ---------------------------------------------------------------
-
-    /** Söe kogus. Ainult NW (controller) blokis on see täidetud multibloki korral. */
+    public static final int MAX_PER_BLOCK = 16;
     private int charcoalAmount = 0;
 
-    /**
-     * Max söe arv.
-     * SINGLE / NW controller = 16 / 64 vastavalt.
-     * NE/SW/SE member blokid = 0 (ei hoia ise midagi).
-     */
-    private int maxCharcoal = 16;
-
-    /** Kas see on 2x2 multibloki "master" (NW nurk ehk origin). */
-    private boolean isController = true;
-
-    // ---------------------------------------------------------------
-    // Forge capability
-    // ---------------------------------------------------------------
-
-    private final LazyOptional<IItemHandler> itemHandlerOpt = LazyOptional.of(this::buildItemHandler);
+    private final BloomeryItemHandler itemHandler = new BloomeryItemHandler();
+    private final LazyOptional<IItemHandler> itemHandlerOpt = LazyOptional.of(() -> itemHandler);
 
     public BloomeryBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
     // ---------------------------------------------------------------
-    // Create behaviours — Mechanical Arm, Chute, Belt input
+    // Create behaviours
     // ---------------------------------------------------------------
 
     @Override
@@ -69,50 +54,92 @@ public class BloomeryBlockEntity extends SmartBlockEntity {
     }
 
     // ---------------------------------------------------------------
-    // Söe lisamine
+    // Üksikbloki sisemine soe lisamine / eemaldamine
     // ---------------------------------------------------------------
 
-    /**
-     * Proovib lisada söe. Kui pole controller, suunab päringu NW-bloki poole.
-     * @return Ülejäänud stack (tühi = kõik võeti vastu)
-     */
     public ItemStack tryInsert(ItemStack stack, boolean simulate) {
         if (!isCharcoal(stack)) return stack;
-
-        if (!isController && level != null) {
-            BloomeryBlockEntity controller = findController();
-            if (controller != null) return controller.tryInsert(stack, simulate);
-            return stack;
-        }
-
-        int space = maxCharcoal - charcoalAmount;
+        int space = MAX_PER_BLOCK - charcoalAmount;
         if (space <= 0) return stack;
-
         int toInsert = Math.min(stack.getCount(), space);
         if (!simulate) {
             charcoalAmount += toInsert;
             setChanged();
             sendData();
         }
-
         if (toInsert >= stack.getCount()) return ItemStack.EMPTY;
-        ItemStack remainder = stack.copy();
-        remainder.setCount(stack.getCount() - toInsert);
-        return remainder;
+        return ItemHandlerHelper.copyStackWithSize(stack, stack.getCount() - toInsert);
+    }
+
+    /** Võtab söe ainult sellest blokist — kasutatakse sisemiselt. */
+    public ItemStack tryExtractLocal(int amount, boolean simulate) {
+        if (charcoalAmount == 0) return ItemStack.EMPTY;
+        int extracted = Math.min(amount, charcoalAmount);
+        if (!simulate) {
+            charcoalAmount -= extracted;
+            setChanged();
+            sendData();
+        }
+        return new ItemStack(Items.CHARCOAL, extracted);
     }
 
     /**
-     * Kutsutakse BloomeryBlock#entityInside kaudu kui mängija kukutab söe sisse.
+     * Võtab söe kogu 2x2 struktuurist (või ainult sellest blokist kui SINGLE).
+     * Järjekord: NW → NE → SW → SE.
      */
+    public ItemStack tryExtractMultiblock(int amount, boolean simulate) {
+        List<BloomeryBlockEntity> group = getMultiblockGroup();
+        if (group.size() == 1) return tryExtractLocal(amount, simulate);
+
+        // Simulate pass — arvuta kui palju saab kätte
+        int remaining = amount;
+        for (BloomeryBlockEntity be : group) {
+            if (remaining <= 0) break;
+            ItemStack got = be.tryExtractLocal(remaining, true);
+            remaining -= got.getCount();
+        }
+        int totalExtracted = amount - remaining;
+        if (totalExtracted == 0) return ItemStack.EMPTY;
+
+        // Tegelik pass
+        if (!simulate) {
+            int toTake = totalExtracted;
+            for (BloomeryBlockEntity be : group) {
+                if (toTake <= 0) break;
+                ItemStack got = be.tryExtractLocal(toTake, false);
+                toTake -= got.getCount();
+            }
+        }
+        return new ItemStack(Items.CHARCOAL, totalExtracted);
+    }
+
+    // Asenda AINULT see meetod BloomeryBlockEntity.java-s
     public void absorbDroppedItem(ItemEntity itemEntity) {
         if (level == null || level.isClientSide) return;
-        if (!isCharcoal(itemEntity.getItem())) return;
 
-        ItemStack remaining = tryInsert(itemEntity.getItem().copy(), false);
-        if (remaining.isEmpty()) {
+        // Võta OTSEVIIDE stackile — mitte copy
+        // Nii näeb iga järgmine tick/kutse kohe uuendatud kogust
+        ItemStack itemStack = itemEntity.getItem();
+        if (!isCharcoal(itemStack) || itemStack.isEmpty()) return;
+
+        List<BloomeryBlockEntity> group = getMultiblockGroup();
+        for (BloomeryBlockEntity be : group) {
+            if (itemStack.isEmpty()) break;
+
+            int space = MAX_PER_BLOCK - be.charcoalAmount;
+            if (space <= 0) continue;
+
+            int toInsert = Math.min(itemStack.getCount(), space);
+            be.charcoalAmount += toInsert;
+            be.setChanged();
+            be.sendData();
+
+            // Shrink KOHE samal viitel — järgmine kutse näeb uut kogust
+            itemStack.shrink(toInsert);
+        }
+
+        if (itemStack.isEmpty()) {
             itemEntity.discard();
-        } else {
-            itemEntity.getItem().setCount(remaining.getCount());
         }
     }
 
@@ -121,87 +148,76 @@ public class BloomeryBlockEntity extends SmartBlockEntity {
     }
 
     // ---------------------------------------------------------------
-    // Multibloki API — kutsutakse BloomeryBlock'ist otse
-    // ---------------------------------------------------------------
-
-    /** Kutsutakse NW nurgablokile kui 2x2 moodustub. Max = 64. */
-    public void setAsController() {
-        this.isController = true;
-        this.maxCharcoal = 64;
-        if (charcoalAmount > maxCharcoal) charcoalAmount = maxCharcoal;
-        setChanged();
-        sendData();
-    }
-
-    /** Kutsutakse NE/SW/SE blokkidele. Ei hoia söe andmeid. */
-    public void setAsMember() {
-        this.isController = false;
-        this.maxCharcoal = 0;
-        this.charcoalAmount = 0;
-        setChanged();
-        sendData();
-    }
-
-    /** Kutsutakse kui multiblokk laguneb — tagasi standalone. Max = 16. */
-    public void setAsStandalone() {
-        this.isController = true;
-        this.maxCharcoal = 16;
-        if (charcoalAmount > 16) charcoalAmount = 16;
-        setChanged();
-        sendData();
-    }
-
-    // ---------------------------------------------------------------
-    // Renderer abimeetodid
+    // Multibloki rühm — leiab kõik 4 blokki (või ainult enda)
     // ---------------------------------------------------------------
 
     /**
-     * Täitumissuhe 0.0–1.0 rendereri jaoks.
-     * Mittecontroller blokid leiavad oma controlleri.
+     * Tagastab kõik BloomeryBlockEntity'd samas 2x2 struktuuris,
+     * järjekorras NW, NE, SW, SE. Kui SINGLE, tagastab ainult enda.
      */
-    public float getFillRatio() {
-        if (isController) {
-            if (maxCharcoal == 0) return 0f;
-            return (float) charcoalAmount / maxCharcoal;
-        }
-        BloomeryBlockEntity controller = findController();
-        return controller != null ? controller.getFillRatio() : 0f;
-    }
+    public List<BloomeryBlockEntity> getMultiblockGroup() {
+        List<BloomeryBlockEntity> group = new ArrayList<>();
+        if (level == null) { group.add(this); return group; }
 
-    public int getCharcoalAmount() {
-        if (isController) return charcoalAmount;
-        BloomeryBlockEntity ctrl = findController();
-        return ctrl != null ? ctrl.charcoalAmount : 0;
-    }
-
-    public int getMaxCharcoal() {
-        if (isController) return maxCharcoal;
-        BloomeryBlockEntity ctrl = findController();
-        return ctrl != null ? ctrl.maxCharcoal : 0;
-    }
-
-    /**
-     * Leiab selle bloki NW (controller) bloki PART state'i põhjal.
-     * Kasutab BloomeryBlock.PART enum-i mis sul juba olemas on.
-     */
-    @Nullable
-    private BloomeryBlockEntity findController() {
-        if (level == null) return null;
         BlockState state = level.getBlockState(worldPosition);
-        if (!(state.getBlock() instanceof BloomeryBlock)) return null;
+        if (!(state.getBlock() instanceof BloomeryBlock)) { group.add(this); return group; }
 
-        BlockPos controllerPos = switch (state.getValue(BloomeryBlock.PART)) {
+        if (state.getValue(BloomeryBlock.STRUCTURE) != BloomeryBlock.StructureType.BOWL_2X2) {
+            group.add(this);
+            return group;
+        }
+
+        // Leia NW (origin) nurk
+        BlockPos nw = switch (state.getValue(BloomeryBlock.PART)) {
+            case NW -> worldPosition;
             case NE -> worldPosition.west();
             case SW -> worldPosition.north();
             case SE -> worldPosition.north().west();
-            default -> worldPosition; // NW ja NONE — see ise on controller
+            default -> worldPosition;
         };
 
-        if (level.getBlockEntity(controllerPos) instanceof BloomeryBlockEntity ctrl) {
-            return ctrl;
+        BlockPos[] positions = { nw, nw.east(), nw.south(), nw.south().east() };
+        for (BlockPos pos : positions) {
+            if (level.getBlockEntity(pos) instanceof BloomeryBlockEntity be) {
+                group.add(be);
+            }
         }
-        return null;
+
+        if (group.isEmpty()) { group.add(this); }
+        return group;
     }
+
+    // ---------------------------------------------------------------
+    // Renderer — ühtlane täitumissuhe kogu 2x2 struktuuris
+    // ---------------------------------------------------------------
+
+    /**
+     * Täitumissuhe 0.0–1.0.
+     * 2x2 korral: (kõigi 4 bloki söe kokku) / 64.
+     * SINGLE korral: enda söe / 16.
+     */
+    public float getFillRatio() {
+        if (level == null) return (float) charcoalAmount / MAX_PER_BLOCK;
+
+        BlockState state = level.getBlockState(worldPosition);
+        if (!(state.getBlock() instanceof BloomeryBlock)) return (float) charcoalAmount / MAX_PER_BLOCK;
+        if (state.getValue(BloomeryBlock.STRUCTURE) != BloomeryBlock.StructureType.BOWL_2X2) {
+            return (float) charcoalAmount / MAX_PER_BLOCK;
+        }
+
+        List<BloomeryBlockEntity> group = getMultiblockGroup();
+        int totalCharcoal = 0;
+        int totalMax = 0;
+        for (BloomeryBlockEntity be : group) {
+            totalCharcoal += be.charcoalAmount;
+            totalMax += MAX_PER_BLOCK;
+        }
+        if (totalMax == 0) return 0f;
+        return (float) totalCharcoal / totalMax;
+    }
+
+    public int getCharcoalAmount() { return charcoalAmount; }
+    public int getMaxCharcoal()    { return MAX_PER_BLOCK; }
 
     // ---------------------------------------------------------------
     // NBT
@@ -211,28 +227,24 @@ public class BloomeryBlockEntity extends SmartBlockEntity {
     protected void read(CompoundTag tag, boolean clientPacket) {
         super.read(tag, clientPacket);
         charcoalAmount = tag.getInt("Charcoal");
-        maxCharcoal    = tag.getInt("MaxCharcoal");
-        isController   = tag.getBoolean("IsController");
-        if (maxCharcoal <= 0 && isController) maxCharcoal = 16;
     }
 
     @Override
     protected void write(CompoundTag tag, boolean clientPacket) {
         super.write(tag, clientPacket);
-        tag.putInt("Charcoal",         charcoalAmount);
-        tag.putInt("MaxCharcoal",      maxCharcoal);
-        tag.putBoolean("IsController", isController);
+        tag.putInt("Charcoal", charcoalAmount);
     }
 
     // ---------------------------------------------------------------
     // Capability
     // ---------------------------------------------------------------
 
+    // UUS — tagastab handler KÕIKIDELE külgedele sh null (mida Arm kasutab)
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.ITEM_HANDLER)
-            return itemHandlerOpt.cast();
+            return itemHandlerOpt.cast(); // side ei loe — kõik küljed OK
         return super.getCapability(cap, side);
     }
 
@@ -242,43 +254,51 @@ public class BloomeryBlockEntity extends SmartBlockEntity {
         itemHandlerOpt.invalidate();
     }
 
-    private IItemHandler buildItemHandler() {
-        return new IItemHandler() {
-            @Override public int getSlots() { return 1; }
+    // ---------------------------------------------------------------
+    // IItemHandler — kasutab multibloki ekstraktsiooni
+    // ---------------------------------------------------------------
 
-            @Override
-            public ItemStack getStackInSlot(int slot) {
-                int amt = getCharcoalAmount();
-                return amt > 0 ? new ItemStack(Items.CHARCOAL, amt) : ItemStack.EMPTY;
-            }
+    private class BloomeryItemHandler implements IItemHandler {
 
-            @Override
-            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-                return tryInsert(stack, simulate);
-            }
+        @Override
+        public int getSlots() { return 1; }
 
-            @Override
-            public ItemStack extractItem(int slot, int amount, boolean simulate) {
-                if (!isController) {
-                    BloomeryBlockEntity ctrl = findController();
-                    return ctrl != null
-                            ? ctrl.buildItemHandler().extractItem(slot, amount, simulate)
-                            : ItemStack.EMPTY;
-                }
-                if (charcoalAmount == 0) return ItemStack.EMPTY;
-                int extracted = Math.min(amount, charcoalAmount);
-                if (!simulate) {
-                    charcoalAmount -= extracted;
-                    setChanged();
-                    sendData();
-                }
-                return new ItemStack(Items.CHARCOAL, extracted);
-            }
+        @Override
+        public ItemStack getStackInSlot(int slot) {
+            // Näita kogu 2x2 sisu
+            List<BloomeryBlockEntity> group = getMultiblockGroup();
+            int total = group.stream().mapToInt(be -> be.charcoalAmount).sum();
+            return total > 0 ? new ItemStack(Items.CHARCOAL, total) : ItemStack.EMPTY;
+        }
 
-            @Override public int getSlotLimit(int slot) { return getMaxCharcoal(); }
-            @Override public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                return isCharcoal(stack);
+        @Override
+        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            // Distribueerib kogu 2x2 gruppi
+            if (!isCharcoal(stack)) return stack;
+            List<BloomeryBlockEntity> group = getMultiblockGroup();
+            ItemStack remaining = stack.copy();
+            for (BloomeryBlockEntity be : group) {
+                if (remaining.isEmpty()) break;
+                remaining = be.tryInsert(remaining, simulate);
             }
-        };
+            return remaining;
+        }
+
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            // Ekstraktib kogu 2x2-st
+            return tryExtractMultiblock(amount, simulate);
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            // 16 per blokk * bloki arv grupis (max 64)
+            return getMultiblockGroup().size() * MAX_PER_BLOCK;
+        }
+
+        @Override
+        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+            return isCharcoal(stack);
+        }
     }
 }

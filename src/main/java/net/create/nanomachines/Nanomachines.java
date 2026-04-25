@@ -1,6 +1,7 @@
 package net.create.nanomachines;
 
 import com.mojang.logging.LogUtils;
+import net.create.nanomachines.block.BloomeryArmInteractionPoint;
 import net.create.nanomachines.block.ModBlockEntities;
 import net.create.nanomachines.block.ModBlocks;
 import net.create.nanomachines.datagen.ModItemModelProvider;
