@@ -1,6 +1,7 @@
 package net.create.nanomachines;
 
 import com.mojang.logging.LogUtils;
+import net.create.nanomachines.block.ModBlockEntities;
 import net.create.nanomachines.block.ModBlocks;
 import net.create.nanomachines.datagen.ModItemModelProvider;
 import net.create.nanomachines.item.ModArmorMaterials;
@@ -33,6 +34,7 @@ public class Nanomachines
         ModItems.register(modEventBus);
         ModParticles.register(modEventBus);
         ModBlocks.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 
