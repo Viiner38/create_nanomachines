@@ -1,23 +1,46 @@
 {
   "variants": {
-    "structure=single,part=none": {
+    "burning=false,structure=single,part=none": {
       "model": "create_nanomachines:block/bloomery"
     },
 
-    "structure=bowl_2x2,part=nw": {
+    "burning=true,structure=single,part=none": {
+      "model": "create_nanomachines:block/burning_bloomery"
+    },
+
+
+    "burning=false,structure=bowl_2x2,part=nw": {
       "model": "create_nanomachines:block/bloomery_bowl_2x2",
       "y": 0
     },
-    "structure=bowl_2x2,part=ne": {
+    "burning=false,structure=bowl_2x2,part=ne": {
       "model": "create_nanomachines:block/bloomery_bowl_2x2",
       "y": 90
     },
-    "structure=bowl_2x2,part=se": {
+    "burning=false,structure=bowl_2x2,part=se": {
       "model": "create_nanomachines:block/bloomery_bowl_2x2",
       "y": 180
     },
-    "structure=bowl_2x2,part=sw": {
+    "burning=false,structure=bowl_2x2,part=sw": {
       "model": "create_nanomachines:block/bloomery_bowl_2x2",
+      "y": 270
+    },
+
+
+    "burning=true,structure=bowl_2x2,part=nw": {
+      "model": "create_nanomachines:block/burning_bloomery_bowl_2x2",
+      "y": 0
+    },
+    "burning=true,structure=bowl_2x2,part=ne": {
+      "model": "create_nanomachines:block/burning_bloomery_bowl_2x2",
+      "y": 90
+    },
+    "burning=true,structure=bowl_2x2,part=se": {
+      "model": "create_nanomachines:block/burning_bloomery_bowl_2x2",
+      "y": 180
+    },
+    "burning=true,structure=bowl_2x2,part=sw": {
+      "model": "create_nanomachines:block/burning_bloomery_bowl_2x2",
       "y": 270
     }
   }
