@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "blocks",
+  "key": {
+    "X": {"item": "create:andesite_alloy"},
+    "B": {"item": "minecraft:iron_ingot"}
+  },
+  "pattern": [
+    "X X",
+    "B B",
+    "XBX"
+  ],
+  "result": {
+    "item": "create_nanomachines:bloomery"
+  },
+  "show_notification": true
+}

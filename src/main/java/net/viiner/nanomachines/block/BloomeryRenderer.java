@@ -105,9 +105,7 @@ public class BloomeryRenderer extends SafeBlockEntityRenderer<BloomeryBlockEntit
         // Only the NW block (or a SINGLE block) spawns particles,
         // but it covers the full 2x2 area — so there are no gaps.
         if (burning && be.getLevel() != null && be.getLevel().isClientSide()) {
-            boolean isNW = !is2x2 || part == BloomeryBlock.BowlPart.NW
-                    || part == BloomeryBlock.BowlPart.NONE;
-            if (isNW) spawnFireParticles(be, partialTick, is2x2);
+            spawnFireParticles(be, partialTick, false);
         }
     }
 
@@ -136,12 +134,13 @@ public class BloomeryRenderer extends SafeBlockEntityRenderer<BloomeryBlockEntit
 
         RandomSource rng = level.getRandom();
         BlockPos pos = be.getBlockPos();
+        if (!level.getBlockState(pos.above()).isAir()) return;
 
         // X/Z span: covers this block only (SINGLE) or both blocks of the 2x2 (NW corner).
         double baseX = pos.getX();
         double baseZ = pos.getZ();
-        double spanX = is2x2 ? 2.0 : 1.0; // 2x2 → spawn across 2 blocks wide/deep
-        double spanZ = is2x2 ? 2.0 : 1.0;
+        double spanX = 1.0;
+        double spanZ = 1.0;
 
         // Inner area (avoid walls)
         double innerMinX = baseX + WALL;

@@ -35,7 +35,7 @@ public class BloomeryBlockEntity extends SmartBlockEntity {
     // ── Constants ────────────────────────────────────────────────────────────────
 
     public static final int MAX_PER_BLOCK = 16;
-    public static final int BURN_DURATION = 600;  // 20 s
+    public static final int BURN_DURATION = 6000;  // 5 min
 
 
     private static final TagKey<Item> CRUSHED_IRON =
