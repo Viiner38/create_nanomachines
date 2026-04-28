@@ -122,7 +122,10 @@
     "burning=false,structure=bowl_3x3,part=c": {
       "model": "create_nanomachines:block/bloomery_bowl_3x3_base",
       "y": 0
-      }
+      },
+    "burning=true,structure=bowl_3x3,part=c": {
+      "model": "create_nanomachines:block/bloomery_bowl_3x3_base",
+      "y": 0
+    }
     }
   }
-}
