@@ -33,34 +33,24 @@ import java.util.List;
 
 public class BloomeryBlock extends Block implements EntityBlock {
 
-    public static final EnumProperty<StructureType> STRUCTURE =
-            EnumProperty.create("structure", StructureType.class);
-    public static final EnumProperty<BowlPart> PART =
-            EnumProperty.create("part", BowlPart.class);
-
-    // Fix 2 & 3: BURNING as blockstate so the lighting engine tracks it properly
+    public static final EnumProperty<StructureType> STRUCTURE = EnumProperty.create("structure", StructureType.class);
+    public static final EnumProperty<BowlPart> PART = EnumProperty.create("part", BowlPart.class);
     public static final BooleanProperty BURNING = BooleanProperty.create("burning");
 
-    // ── Shapes ───────────────────────────────────────────────────────────────────
-
-    private static final VoxelShape SINGLE_SHAPE = Shapes.or(
-            Block.box(0, 2, 0, 16, 16, 2), Block.box(0, 2, 14, 16, 16, 16),
-            Block.box(0, 2, 2, 2, 16, 14), Block.box(14, 2, 2, 16, 16, 14),
-            Block.box(2, 0, 2, 14, 2, 14));
-    private static final VoxelShape NW_SHAPE = Shapes.or(
-            Block.box(0, 2, 0, 16, 16, 2), Block.box(0, 2, 2, 2, 16, 16),
-            Block.box(2, 0, 2, 16, 2, 16));
-    private static final VoxelShape NE_SHAPE = Shapes.or(
-            Block.box(0, 2, 0, 16, 16, 2), Block.box(14, 2, 2, 16, 16, 16),
-            Block.box(0, 0, 2, 14, 2, 16));
-    private static final VoxelShape SW_SHAPE = Shapes.or(
-            Block.box(0, 2, 14, 16, 16, 16), Block.box(0, 2, 0, 2, 16, 14),
-            Block.box(2, 0, 0, 16, 2, 14));
-    private static final VoxelShape SE_SHAPE = Shapes.or(
-            Block.box(0, 2, 14, 16, 16, 16), Block.box(14, 2, 0, 16, 16, 14),
-            Block.box(0, 0, 0, 14, 2, 14));
-
-    // ── Constructor ──────────────────────────────────────────────────────────────
+    private static final VoxelShape[] SHAPES = new VoxelShape[16];
+    static {
+        for (int i = 0; i < 16; i++) {
+            boolean n = (i & 1) != 0, s = (i & 2) != 0, w = (i & 4) != 0, e = (i & 8) != 0;
+            int minX = w ? 2 : 0, maxX = e ? 14 : 16;
+            int minZ = n ? 2 : 0, maxZ = s ? 14 : 16;
+            VoxelShape shape = Block.box(minX, 0, minZ, maxX, 2, maxZ);
+            if (n) shape = Shapes.or(shape, Block.box(0, 2, 0, 16, 16, 2));
+            if (s) shape = Shapes.or(shape, Block.box(0, 2, 14, 16, 16, 16));
+            if (w) shape = Shapes.or(shape, Block.box(0, 2, minZ, 2, 16, maxZ));
+            if (e) shape = Shapes.or(shape, Block.box(14, 2, minZ, 16, 16, maxZ));
+            SHAPES[i] = shape.optimize();
+        }
+    }
 
     public BloomeryBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -75,8 +65,6 @@ public class BloomeryBlock extends Block implements EntityBlock {
         builder.add(STRUCTURE, PART, BURNING);
     }
 
-    // ── EntityBlock ──────────────────────────────────────────────────────────────
-
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
@@ -85,34 +73,23 @@ public class BloomeryBlock extends Block implements EntityBlock {
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (type != ModBlockEntities.BLOOMERY.get()) return null;
-        @SuppressWarnings("unchecked")
-        BlockEntityTicker<T> ticker = (BlockEntityTicker<T>)
-                (BlockEntityTicker<BloomeryBlockEntity>) (lvl, pos, st, be) -> be.tick();
-        return ticker;
+        return (lvl, pos, st, be) -> ((BloomeryBlockEntity) be).tick();
     }
-
-    // ── Fix 2 & 3: light from blockstate — engine propagates this automatically ──
 
     @Override
     public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
         return state.getValue(BURNING) ? 15 : 0;
     }
 
-    // ── Interaction ──────────────────────────────────────────────────────────────
-
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos,
-                                 Player player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
-        if (!(level.getBlockEntity(pos) instanceof BloomeryBlockEntity be))
-            return InteractionResult.PASS;
+        if (!(level.getBlockEntity(pos) instanceof BloomeryBlockEntity be)) return InteractionResult.PASS;
 
         ItemStack held = player.getItemInHand(hand);
 
-        // Flint and steel → start burning
         if (held.is(Items.FLINT_AND_STEEL)) {
             if (be.canStartBurning()) {
                 be.startBurning(level, pos);
@@ -124,7 +101,6 @@ public class BloomeryBlock extends Block implements EntityBlock {
 
         if (be.isBurning()) return InteractionResult.PASS;
 
-        // Charcoal → fill multiblock
         if (be.isCharcoal(held)) {
             ItemStack rem = held.copy();
             for (BloomeryBlockEntity member : be.getMultiblockGroup()) {
@@ -139,7 +115,6 @@ public class BloomeryBlock extends Block implements EntityBlock {
             return InteractionResult.PASS;
         }
 
-        // Iron → into this block's iron slot
         if (be.isValidIron(held)) {
             ItemStack rem = be.tryInsertIron(held, false);
             if (rem.getCount() < held.getCount()) {
@@ -149,22 +124,24 @@ public class BloomeryBlock extends Block implements EntityBlock {
             return InteractionResult.PASS;
         }
 
-        // Empty hand → extract steel then charcoal
         if (held.isEmpty()) {
             ItemStack steel = be.tryExtractSteelMultiblock(1, false);
-            if (!steel.isEmpty()) { player.getInventory().add(steel); return InteractionResult.CONSUME; }
+            if (!steel.isEmpty()) {
+                player.getInventory().add(steel);
+                return InteractionResult.sidedSuccess(level.isClientSide);
+            }
 
             List<BloomeryBlockEntity> group = be.getMultiblockGroup();
             int total = group.stream().mapToInt(BloomeryBlockEntity::getCharcoalAmount).sum();
             int toExtract = player.isShiftKeyDown() ? total : 1;
             ItemStack charcoal = be.tryExtractMultiblock(toExtract, false);
-            if (!charcoal.isEmpty()) { player.getInventory().add(charcoal); return InteractionResult.CONSUME; }
+            if (!charcoal.isEmpty()) {
+                player.getInventory().add(charcoal);
+                return InteractionResult.sidedSuccess(level.isClientSide);
+            }
         }
-
         return InteractionResult.PASS;
     }
-
-    // ── Item drop absorption ─────────────────────────────────────────────────────
 
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
@@ -172,18 +149,15 @@ public class BloomeryBlock extends Block implements EntityBlock {
         if (level.isClientSide) return;
         if (entity instanceof ItemEntity itemEntity && !itemEntity.getItem().isEmpty()) {
             if (level.getBlockEntity(pos) instanceof BloomeryBlockEntity be) {
-                ItemStack item = itemEntity.getItem();
-                if (be.isCharcoal(item) || be.isValidIron(item))
+                if (be.isCharcoal(itemEntity.getItem()) || be.isValidIron(itemEntity.getItem())) {
                     be.absorbDroppedItem(itemEntity);
+                }
             }
         }
     }
 
-    // ── Break drops ──────────────────────────────────────────────────────────────
-
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos,
-                         BlockState newState, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (state.getBlock() != newState.getBlock()) {
             if (level.getBlockEntity(pos) instanceof BloomeryBlockEntity be) {
                 int amount = be.getCharcoalAmount();
@@ -192,7 +166,7 @@ public class BloomeryBlock extends Block implements EntityBlock {
                     popResource(level, pos, new ItemStack(Items.CHARCOAL, drop));
                     amount -= drop;
                 }
-                if (!be.getIronItem().isEmpty())    popResource(level, pos, be.getIronItem());
+                if (!be.getIronItem().isEmpty()) popResource(level, pos, be.getIronItem());
                 if (!be.getSteelOutput().isEmpty()) popResource(level, pos, be.getSteelOutput());
             }
             super.onRemove(state, level, pos, newState, movedByPiston);
@@ -202,20 +176,15 @@ public class BloomeryBlock extends Block implements EntityBlock {
         }
     }
 
-    // ── Multiblock logic ─────────────────────────────────────────────────────────
-
     @Override
-    public void onPlace(BlockState state, Level level, BlockPos pos,
-                        BlockState oldState, boolean movedByPiston) {
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
-        if (!level.isClientSide && state.getBlock() != oldState.getBlock())
-            scheduleRefresh(level, pos);
+        if (!level.isClientSide && state.getBlock() != oldState.getBlock()) scheduleRefresh(level, pos);
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos,
-                                Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
-        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+        super.neighborChanged(state, level, pos, block, fromPos, isMoving);
         if (!level.isClientSide) scheduleRefresh(level, pos);
     }
 
@@ -225,70 +194,114 @@ public class BloomeryBlock extends Block implements EntityBlock {
     }
 
     private void scheduleRefresh(Level level, BlockPos center) {
-        for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) {
+        for (int x = -2; x <= 2; x++) for (int z = -2; z <= 2; z++) {
             BlockPos p = center.offset(x, 0, z);
-            if (level.getBlockState(p).getBlock() instanceof BloomeryBlock)
-                level.scheduleTick(p, this, 1);
+            if (level.getBlockState(p).getBlock() instanceof BloomeryBlock) level.scheduleTick(p, this, 1);
         }
     }
 
     private void refreshAround(Level level, BlockPos center) {
-        for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) {
+        for (int x = -2; x <= 2; x++) for (int z = -2; z <= 2; z++) {
             BlockPos p = center.offset(x, 0, z);
-            if (level.getBlockState(p).getBlock() instanceof BloomeryBlock)
-                updateForm(level, p);
+            if (level.getBlockState(p).getBlock() instanceof BloomeryBlock) updateForm(level, p);
         }
     }
 
     private void updateForm(Level level, BlockPos pos) {
-        BlockPos[] origins = { pos, pos.west(), pos.north(), pos.north().west() };
-        for (BlockPos o : origins) { if (canForm2x2(level, o)) { apply2x2(level, o); return; } }
+        // Prioriteet 1: Suurim võimalik ahi (3x3)
+        for (int dx = 0; dx >= -2; dx--) for (int dz = 0; dz >= -2; dz--) {
+            BlockPos o = pos.offset(dx, 0, dz);
+            if (canForm3x3(level, o)) { apply3x3(level, o); return; }
+        }
+        // Prioriteet 2: Suuruselt teine ahi (2x2)
+        for (int dx = 0; dx >= -1; dx--) for (int dz = 0; dz >= -1; dz--) {
+            BlockPos o = pos.offset(dx, 0, dz);
+            if (canForm2x2(level, o)) { apply2x2(level, o); return; }
+        }
+        // Prioriteet 3: Kolmas suurus (3x1 X-teljel)
+        for (int dx = 0; dx >= -2; dx--) {
+            BlockPos o = pos.offset(dx, 0, 0);
+            if (canForm3x1X(level, o)) { apply3x1X(level, o); return; }
+        }
+        // Prioriteet 4: Kolmas suurus (3x1 Z-teljel)
+        for (int dz = 0; dz >= -2; dz--) {
+            BlockPos o = pos.offset(0, 0, dz);
+            if (canForm3x1Z(level, o)) { apply3x1Z(level, o); return; }
+        }
+        // Kui ükski ei sobi, muudame tagasi üksikuks plokiks
         clearSingle(level, pos);
     }
 
-    private boolean canForm2x2(Level level, BlockPos origin) {
-        return canJoin2x2(level, origin, BowlPart.NW)
-                && canJoin2x2(level, origin.east(), BowlPart.NE)
-                && canJoin2x2(level, origin.south(), BowlPart.SW)
-                && canJoin2x2(level, origin.south().east(), BowlPart.SE);
+    private int getStructureSize(StructureType st) {
+        return switch (st) {
+            case BOWL_3X3 -> 9;
+            case BOWL_2X2 -> 4;
+            case LINE_3X1_X, LINE_3X1_Z -> 3;
+            case SINGLE -> 1;
+        };
     }
 
-    private boolean canJoin2x2(Level level, BlockPos pos, BowlPart expectedPart) {
-        BlockState st = level.getBlockState(pos);
-        if (!(st.getBlock() instanceof BloomeryBlock)) return false;
-        StructureType s = st.getValue(STRUCTURE);
-        BowlPart p = st.getValue(PART);
-        if (s == StructureType.SINGLE) return true;
-        return s == StructureType.BOWL_2X2 && p == expectedPart;
+    private boolean canJoin(Level level, BlockPos pos, StructureType st, BowlPart pt) {
+        BlockState state = level.getBlockState(pos);
+        if (!(state.getBlock() instanceof BloomeryBlock)) return false;
+        if (state.getValue(BURNING)) return false; // Põlevat ahju ei tohi lõhkuda
+
+        StructureType currentSt = state.getValue(STRUCTURE);
+        if (currentSt == StructureType.SINGLE) return true;
+        if (currentSt == st && state.getValue(PART) == pt) return true;
+
+        // VÕTI UPGRADE'IMISEKS: Kui uus struktuur on SUUREM kui vana, neelab ta vana alla!
+        return getStructureSize(st) > getStructureSize(currentSt);
     }
 
-    private void apply2x2(Level level, BlockPos origin) {
-        setPart(level, origin, BowlPart.NW);
-        setPart(level, origin.east(), BowlPart.NE);
-        setPart(level, origin.south(), BowlPart.SW);
-        setPart(level, origin.south().east(), BowlPart.SE);
+    private boolean canForm3x3(Level level, BlockPos o) {
+        return canJoin(level, o, StructureType.BOWL_3X3, BowlPart.NW) && canJoin(level, o.east(), StructureType.BOWL_3X3, BowlPart.N) && canJoin(level, o.east(2), StructureType.BOWL_3X3, BowlPart.NE) &&
+                canJoin(level, o.south(), StructureType.BOWL_3X3, BowlPart.W) && canJoin(level, o.south().east(), StructureType.BOWL_3X3, BowlPart.C) && canJoin(level, o.south().east(2), StructureType.BOWL_3X3, BowlPart.E) &&
+                canJoin(level, o.south(2), StructureType.BOWL_3X3, BowlPart.SW) && canJoin(level, o.south(2).east(), StructureType.BOWL_3X3, BowlPart.S) && canJoin(level, o.south(2).east(2), StructureType.BOWL_3X3, BowlPart.SE);
+    }
+    private boolean canForm3x1X(Level level, BlockPos o) {
+        return canJoin(level, o, StructureType.LINE_3X1_X, BowlPart.W) && canJoin(level, o.east(), StructureType.LINE_3X1_X, BowlPart.C) && canJoin(level, o.east(2), StructureType.LINE_3X1_X, BowlPart.E);
+    }
+    private boolean canForm3x1Z(Level level, BlockPos o) {
+        return canJoin(level, o, StructureType.LINE_3X1_Z, BowlPart.N) && canJoin(level, o.south(), StructureType.LINE_3X1_Z, BowlPart.C) && canJoin(level, o.south(2), StructureType.LINE_3X1_Z, BowlPart.S);
+    }
+    private boolean canForm2x2(Level level, BlockPos o) {
+        return canJoin(level, o, StructureType.BOWL_2X2, BowlPart.NW) && canJoin(level, o.east(), StructureType.BOWL_2X2, BowlPart.NE) &&
+                canJoin(level, o.south(), StructureType.BOWL_2X2, BowlPart.SW) && canJoin(level, o.south().east(), StructureType.BOWL_2X2, BowlPart.SE);
     }
 
-    private void setPart(Level level, BlockPos pos, BowlPart part) {
-        BlockState st = level.getBlockState(pos);
-        if (!(st.getBlock() instanceof BloomeryBlock)) return;
-        // Preserve BURNING state when updating structure/part
-        BlockState ns = st.setValue(STRUCTURE, StructureType.BOWL_2X2).setValue(PART, part);
-        if (st != ns) level.setBlock(pos, ns, 3);
+    private void apply3x3(Level level, BlockPos o) {
+        setPart(level, o, StructureType.BOWL_3X3, BowlPart.NW); setPart(level, o.east(), StructureType.BOWL_3X3, BowlPart.N); setPart(level, o.east(2), StructureType.BOWL_3X3, BowlPart.NE);
+        setPart(level, o.south(), StructureType.BOWL_3X3, BowlPart.W); setPart(level, o.south().east(), StructureType.BOWL_3X3, BowlPart.C); setPart(level, o.south().east(2), StructureType.BOWL_3X3, BowlPart.E);
+        setPart(level, o.south(2), StructureType.BOWL_3X3, BowlPart.SW); setPart(level, o.south(2).east(), StructureType.BOWL_3X3, BowlPart.S); setPart(level, o.south(2).east(2), StructureType.BOWL_3X3, BowlPart.SE);
+    }
+    private void apply3x1X(Level level, BlockPos o) {
+        setPart(level, o, StructureType.LINE_3X1_X, BowlPart.W); setPart(level, o.east(), StructureType.LINE_3X1_X, BowlPart.C); setPart(level, o.east(2), StructureType.LINE_3X1_X, BowlPart.E);
+    }
+    private void apply3x1Z(Level level, BlockPos o) {
+        setPart(level, o, StructureType.LINE_3X1_Z, BowlPart.N); setPart(level, o.south(), StructureType.LINE_3X1_Z, BowlPart.C); setPart(level, o.south(2), StructureType.LINE_3X1_Z, BowlPart.S);
+    }
+    private void apply2x2(Level level, BlockPos o) {
+        setPart(level, o, StructureType.BOWL_2X2, BowlPart.NW); setPart(level, o.east(), StructureType.BOWL_2X2, BowlPart.NE);
+        setPart(level, o.south(), StructureType.BOWL_2X2, BowlPart.SW); setPart(level, o.south().east(), StructureType.BOWL_2X2, BowlPart.SE);
+    }
+
+    private void setPart(Level level, BlockPos pos, StructureType st, BowlPart part) {
+        BlockState stState = level.getBlockState(pos);
+        if (stState.getBlock() instanceof BloomeryBlock) {
+            BlockState ns = stState.setValue(STRUCTURE, st).setValue(PART, part);
+            if (stState != ns) level.setBlock(pos, ns, 3);
+        }
     }
 
     private void clearSingle(Level level, BlockPos pos) {
         BlockState st = level.getBlockState(pos);
-        if (!(st.getBlock() instanceof BloomeryBlock)) return;
-        // Preserve BURNING state when clearing
-        BlockState ns = st.setValue(STRUCTURE, StructureType.SINGLE).setValue(PART, BowlPart.NONE);
-        if (st != ns) level.setBlock(pos, ns, 3);
+        if (st.getBlock() instanceof BloomeryBlock) {
+            BlockState ns = st.setValue(STRUCTURE, StructureType.SINGLE).setValue(PART, BowlPart.NONE);
+            if (st != ns) level.setBlock(pos, ns, 3);
+        }
     }
 
-    /**
-     * Called by BloomeryBlockEntity to update the BURNING blockstate flag.
-     * This is what makes the lighting engine propagate light correctly.
-     */
     public static void setBurningState(Level level, BlockPos pos, boolean burning) {
         BlockState st = level.getBlockState(pos);
         if (st.getBlock() instanceof BloomeryBlock) {
@@ -296,15 +309,22 @@ public class BloomeryBlock extends Block implements EntityBlock {
         }
     }
 
-    // ── Shapes ───────────────────────────────────────────────────────────────────
+    public static boolean[] getWalls(StructureType st, BowlPart pt) {
+        if (st == StructureType.SINGLE) return new boolean[]{true, true, true, true};
+        if (st == StructureType.BOWL_2X2) return new boolean[]{ pt==BowlPart.NW||pt==BowlPart.NE, pt==BowlPart.SW||pt==BowlPart.SE, pt==BowlPart.NW||pt==BowlPart.SW, pt==BowlPart.NE||pt==BowlPart.SE };
+        if (st == StructureType.LINE_3X1_X) return new boolean[]{ true, true, pt==BowlPart.W, pt==BowlPart.E };
+        if (st == StructureType.LINE_3X1_Z) return new boolean[]{ pt==BowlPart.N, pt==BowlPart.S, true, true };
+        if (st == StructureType.BOWL_3X3) return new boolean[]{
+                pt==BowlPart.NW||pt==BowlPart.N||pt==BowlPart.NE, pt==BowlPart.SW||pt==BowlPart.S||pt==BowlPart.SE,
+                pt==BowlPart.NW||pt==BowlPart.W||pt==BowlPart.SW, pt==BowlPart.NE||pt==BowlPart.E||pt==BowlPart.SE
+        };
+        return new boolean[]{true, true, true, true};
+    }
 
     private VoxelShape getCurrentShape(BlockState state) {
-        if (state.getValue(STRUCTURE) != StructureType.BOWL_2X2) return SINGLE_SHAPE;
-        return switch (state.getValue(PART)) {
-            case NW -> NW_SHAPE; case NE -> NE_SHAPE;
-            case SW -> SW_SHAPE; case SE -> SE_SHAPE;
-            default -> SINGLE_SHAPE;
-        };
+        boolean[] walls = getWalls(state.getValue(STRUCTURE), state.getValue(PART));
+        int index = (walls[0]?1:0) | (walls[1]?2:0) | (walls[2]?4:0) | (walls[3]?8:0);
+        return SHAPES[index];
     }
 
     @Override
@@ -312,16 +332,14 @@ public class BloomeryBlock extends Block implements EntityBlock {
     @Override
     public VoxelShape getCollisionShape(BlockState s, BlockGetter l, BlockPos p, CollisionContext c) { return getCurrentShape(s); }
 
-    // ── Enums ─────────────────────────────────────────────────────────────────────
-
     public enum StructureType implements StringRepresentable {
-        SINGLE("single"), BOWL_2X2("bowl_2x2"), LINE_3X1("line_3x1"), BOWL_3X3("bowl_3x3");
+        SINGLE("single"), BOWL_2X2("bowl_2x2"), LINE_3X1_X("line_3x1_x"), LINE_3X1_Z("line_3x1_z"), BOWL_3X3("bowl_3x3");
         private final String name; StructureType(String name) { this.name = name; }
         @Override public String getSerializedName() { return name; }
     }
 
     public enum BowlPart implements StringRepresentable {
-        NONE("none"), NW("nw"), NE("ne"), SW("sw"), SE("se");
+        NONE("none"), NW("nw"), N("n"), NE("ne"), W("w"), C("c"), E("e"), SW("sw"), S("s"), SE("se");
         private final String name; BowlPart(String name) { this.name = name; }
         @Override public String getSerializedName() { return name; }
     }

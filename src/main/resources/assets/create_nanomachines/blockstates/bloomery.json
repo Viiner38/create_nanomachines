@@ -9,6 +9,9 @@
     },
 
 
+
+
+
     "burning=false,structure=bowl_2x2,part=nw": {
       "model": "create_nanomachines:block/bloomery_bowl_2x2",
       "y": 0
@@ -26,7 +29,6 @@
       "y": 270
     },
 
-
     "burning=true,structure=bowl_2x2,part=nw": {
       "model": "create_nanomachines:block/burning_bloomery_bowl_2x2",
       "y": 0
@@ -42,6 +44,85 @@
     "burning=true,structure=bowl_2x2,part=sw": {
       "model": "create_nanomachines:block/burning_bloomery_bowl_2x2",
       "y": 270
+    },
+
+
+
+
+
+    "burning=false,structure=bowl_3x3,part=w": {
+      "model": "create_nanomachines:block/bloomery_bowl_3x3",
+      "y": 0
+    },
+    "burning=false,structure=bowl_3x3,part=n": {
+      "model": "create_nanomachines:block/bloomery_bowl_3x3",
+      "y": 90
+    },
+    "burning=false,structure=bowl_3x3,part=e": {
+      "model": "create_nanomachines:block/bloomery_bowl_3x3",
+      "y": 180
+    },
+    "burning=false,structure=bowl_3x3,part=s": {
+      "model": "create_nanomachines:block/bloomery_bowl_3x3",
+      "y": 270
+    },
+
+
+    "burning=true,structure=bowl_3x3,part=w": {
+      "model": "create_nanomachines:block/burning_bloomery_bowl_3x3",
+      "y": 0
+    },
+    "burning=true,structure=bowl_3x3,part=n": {
+      "model": "create_nanomachines:block/burning_bloomery_bowl_3x3",
+      "y": 90
+    },
+    "burning=true,structure=bowl_3x3,part=e": {
+      "model": "create_nanomachines:block/burning_bloomery_bowl_3x3",
+      "y": 180
+    },
+    "burning=true,structure=bowl_3x3,part=s": {
+      "model": "create_nanomachines:block/burning_bloomery_bowl_3x3",
+      "y": 270
+    },
+
+    "burning=false,structure=bowl_3x3,part=nw": {
+      "model": "create_nanomachines:block/bloomery_bowl_2x2",
+      "y": 0
+    },
+    "burning=false,structure=bowl_3x3,part=ne": {
+      "model": "create_nanomachines:block/bloomery_bowl_2x2",
+      "y": 90
+    },
+    "burning=false,structure=bowl_3x3,part=se": {
+      "model": "create_nanomachines:block/bloomery_bowl_2x2",
+      "y": 180
+    },
+    "burning=false,structure=bowl_3x3,part=sw": {
+      "model": "create_nanomachines:block/bloomery_bowl_2x2",
+      "y": 270
+    },
+
+    "burning=true,structure=bowl_3x3,part=nw": {
+      "model": "create_nanomachines:block/burning_bloomery_bowl_2x2",
+      "y": 0
+    },
+    "burning=true,structure=bowl_3x3,part=ne": {
+      "model": "create_nanomachines:block/burning_bloomery_bowl_2x2",
+      "y": 90
+    },
+    "burning=true,structure=bowl_3x3,part=se": {
+      "model": "create_nanomachines:block/burning_bloomery_bowl_2x2",
+      "y": 180
+    },
+    "burning=true,structure=bowl_3x3,part=sw": {
+      "model": "create_nanomachines:block/burning_bloomery_bowl_2x2",
+      "y": 270
+    },
+
+    "burning=false,structure=bowl_3x3,part=c": {
+      "model": "create_nanomachines:block/bloomery_bowl_3x3_base",
+      "y": 0
+      }
     }
   }
 }
