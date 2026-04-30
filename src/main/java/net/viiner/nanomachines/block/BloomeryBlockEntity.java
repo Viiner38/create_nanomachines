@@ -1,5 +1,6 @@
 package net.viiner.nanomachines.block;
 
+import com.simibubi.create.AllTags;
 import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -25,6 +26,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.viiner.nanomachines.item.ModItems;
 
 import javax.annotation.Nonnull;
@@ -35,13 +37,11 @@ import java.util.List;
 public class BloomeryBlockEntity extends SmartBlockEntity {
 
     public static final int MAX_PER_BLOCK = 16;
-    public static final int BURN_DURATION = 600;
+    public static final int BURN_DURATION = 6000;
     public static final int FADE_START    = BURN_DURATION - 20;
 
-    private static final TagKey<Item> CRUSHED_IRON_TAG =
-            ItemTags.create(new ResourceLocation("create", "crushed_raw_ores/iron"));
-    private static final TagKey<Item> IRON_SHEET_TAG =
-            ItemTags.create(new ResourceLocation("create", "iron_sheets"));
+    private static final TagKey<Item> IRON_SHEET =
+            ItemTags.create(new ResourceLocation("forge", "plates/iron"));
 
     private int       charcoalAmount = 0;
     private ItemStack ironItem       = ItemStack.EMPTY;
@@ -206,8 +206,11 @@ public class BloomeryBlockEntity extends SmartBlockEntity {
 
     public boolean isValidIron(ItemStack s) {
         if (s.isEmpty()) return false;
-        return s.is(Items.IRON_INGOT) || s.is(Items.RAW_IRON)
-                || s.is(CRUSHED_IRON_TAG) || s.is(IRON_SHEET_TAG);
+        if (s.is(Items.IRON_INGOT) || s.is(Items.RAW_IRON)) return true;
+        if (s.is(IRON_SHEET)) return true;
+        var crushedIron = ForgeRegistries.ITEMS.getValue(
+                new ResourceLocation("create", "crushed_raw_iron"));
+        return crushedIron != null && s.is(crushedIron);
     }
 
     // ── Drop absorption ──────────────────────────────────────────────────────────

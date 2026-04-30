@@ -35,7 +35,7 @@ public class BloomeryRenderer extends SafeBlockEntityRenderer<BloomeryBlockEntit
     private static final float FLOOR_Y      = 2f / 16f;
     private static final float MAX_CH_Y     = 15f / 16f;
     private static final float FIRE_FLOOR_Y = 14f / 16f;
-    private static final float FIRE_MAX_Y   = 0.05f;
+    private static final float FIRE_MAX_Y   = 0.04f;
     private static final int   FIRE_RISE_TICKS = 65;
     private static final int   FADE_START   = BloomeryBlockEntity.FADE_START;
 

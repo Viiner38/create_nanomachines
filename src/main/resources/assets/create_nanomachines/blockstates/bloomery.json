@@ -126,14 +126,64 @@
     "burning=true,structure=bowl_3x3,part=c": {
       "model": "create_nanomachines:block/bloomery_bowl_3x3_base",
       "y": 0
+    },
+
+
+    "burning=false,structure=line_3x1,part=z_n": {
+      "model": "create_nanomachines:block/bloomery_line_3x1",
+      "y": 90
+    },
+    "burning=false,structure=line_3x1,part=z_m": {
+      "model": "create_nanomachines:block/bloomery_line_3x1_middle",
+      "y": 0
+    },
+    "burning=false,structure=line_3x1,part=z_s": {
+      "model": "create_nanomachines:block/bloomery_line_3x1",
+      "y": 270
+    },
+
+    "burning=true,structure=line_3x1,part=z_n": {
+      "model": "create_nanomachines:block/burning_bloomery_line_3x1",
+      "y": 90
+    },
+    "burning=true,structure=line_3x1,part=z_m": {
+      "model": "create_nanomachines:block/burning_bloomery_line_3x1_middle",
+      "y": 0
+    },
+    "burning=true,structure=line_3x1,part=z_s": {
+      "model": "create_nanomachines:block/burning_bloomery_line_3x1",
+      "y": 270
+    },
+
+
+
+    "burning=false,structure=line_3x1,part=x_w": {
+      "model": "create_nanomachines:block/bloomery_line_3x1",
+      "y": 0
+    },
+    "burning=false,structure=line_3x1,part=x_m": {
+      "model": "create_nanomachines:block/bloomery_line_3x1_middle",
+      "y": 270
+    },
+    "burning=false,structure=line_3x1,part=x_e": {
+      "model": "create_nanomachines:block/bloomery_line_3x1",
+      "y": 180
+    },
+
+    "burning=true,structure=line_3x1,part=x_w": {
+      "model": "create_nanomachines:block/burning_bloomery_line_3x1",
+      "y": 0
+    },
+    "burning=true,structure=line_3x1,part=x_m": {
+      "model": "create_nanomachines:block/burning_bloomery_line_3x1_middle",
+      "y": 270
+    },
+    "burning=true,structure=line_3x1,part=x_e": {
+      "model": "create_nanomachines:block/burning_bloomery_line_3x1",
+      "y": 180
     }
-
-
-
-    }
-
-
 
 
 
   }
+}
