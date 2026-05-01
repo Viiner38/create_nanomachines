@@ -23,7 +23,7 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, Nanomachines.MOD_ID);
 
-    public static final RegistryObject<Item> HF_MURASAMA = ITEMS.register("hf_murasama", ()
+    public static final RegistryObject<Item> HF_BLADE_RED = ITEMS.register("hf_blade_red", ()
             -> new SwordItem(Tiers.NETHERITE, 5, -2.4f, new Item.Properties()
             .fireResistant().rarity(Rarity.UNCOMMON).durability(2013)) {
 
@@ -89,10 +89,30 @@ public class ModItems {
             -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> NANOMACHINES_HFHANDLE = ITEMS.register("hf_handle", ()
             -> new Item(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> NANOMACHINES_HFBLADE = ITEMS.register("hf_blade", ()
+    public static final RegistryObject<Item> NANOMACHINES_BLADE_PART = ITEMS.register("blade_part", ()
             -> new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> NANOMACHINES_HEART = ITEMS.register("nm_heart", ()
             -> new Item(new Item.Properties().rarity(Rarity.EPIC)));
+
+
+    public static final RegistryObject<Item> HF_BLADE = ITEMS.register("hf_blade", ()
+            -> new SwordItem(ModToolTiers.STEEL, 5, -2.4f, new Item.Properties()
+            .rarity(Rarity.UNCOMMON).durability(2013)));
+
+    public static final RegistryObject<Item> HF_BLADE_PINK = ITEMS.register("hf_blade_pink", ()
+            -> new SwordItem(ModToolTiers.STEEL, 5, -2.4f, new Item.Properties()
+            .rarity(Rarity.UNCOMMON).durability(2013)));
+
+    public static final RegistryObject<Item> HF_BLADE_GREEN = ITEMS.register("hf_blade_green", ()
+            -> new SwordItem(ModToolTiers.STEEL, 5, -2.4f, new Item.Properties()
+            .rarity(Rarity.UNCOMMON).durability(2013)));
+
+
+
+
+
+
+
 
 
     public static void register(IEventBus eventBus) {

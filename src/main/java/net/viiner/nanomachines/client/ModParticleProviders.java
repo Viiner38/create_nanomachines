@@ -15,6 +15,7 @@ public class ModParticleProviders {
     @SubscribeEvent
     public static void registerParticles(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(ModParticles.REDSWEEP_ATTACK.get(), RedSweepParticle.Provider::new);
-
     }
+
+
 }

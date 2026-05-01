@@ -1,5 +1,25 @@
 {
-  "item.create_nanomachines.hf_murasama": "Murasama",
+
+  "item.create_nanomachines.hf_blade": "HF Blade",
+  "item.create_nanomachines.hf_blade_red": "HF Blade",
+  "item.create_nanomachines.hf_blade_pink": "HF Blade",
+  "item.create_nanomachines.hf_blade_magenta": "HF Blade",
+  "item.create_nanomachines.hf_blade_purple": "HF Blade",
+  "item.create_nanomachines.hf_blade_yellow": "HF Blade",
+  "item.create_nanomachines.hf_blade_green": "HF Blade",
+  "item.create_nanomachines.hf_blade_orange": "HF Blade",
+  "item.create_nanomachines.hf_blade_cyan": "HF Blade",
+  "item.create_nanomachines.hf_blade_black": "HF Blade",
+  "item.create_nanomachines.hf_blade_lime": "HF Blade",
+  "item.create_nanomachines.hf_blade_light_gray": "HF Blade",
+  "item.create_nanomachines.hf_blade_light_blue": "HF Blade",
+  "item.create_nanomachines.hf_blade_brown": "HF Blade",
+  "item.create_nanomachines.hf_blade_white": "HF Blade",
+
+
+
+
+
 
   "block.create_nanomachines.bloomery": "Bloomery",
 
@@ -20,9 +40,16 @@
   "item.create_nanomachines.steel_sheet": "Steel Sheet",
 
   "item.create_nanomachines.hf_motor": "High Frequency Motor",
-  "item.create_nanomachines.hf_handle": "High Frequency Blade Handle",
-  "item.create_nanomachines.hf_blade": "Murasama Blade",
+  "item.create_nanomachines.hf_handle": "HF Blade Handle",
+  "item.create_nanomachines.blade_part": "Blade Part",
   "item.create_nanomachines.nm_heart": "Heart of Nanomachines",
 
-  "creativetab.nanomachines_tab": "Create: Nanomachines"
+
+
+  "creativetab.nanomachines_tab": "Create: Nanomachines",
+
+
+
+  "nanomachines.jei.bloomery_burning": "Bloomery Burning",
+  "nanomachines.jei.bloomery.burn_time": "Burn Time: %s"
 }

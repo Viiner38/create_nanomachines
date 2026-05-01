@@ -40,7 +40,7 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
         protected void registerModels() {
-            handheldItem(ModItems.HF_MURASAMA);
+            handheldItem(ModItems.HF_BLADE_RED);
             handheldItem(ModItems.NANOMACHINES_STEELPICKAXE);
             handheldItem(ModItems.NANOMACHINES_STEELAXE);
             handheldItem(ModItems.NANOMACHINES_STEELHOE);

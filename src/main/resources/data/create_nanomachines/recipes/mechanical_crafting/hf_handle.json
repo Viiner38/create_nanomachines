@@ -2,17 +2,17 @@
   "type": "create:mechanical_crafting",
   "acceptMirrored": true,
   "pattern": [
-    "  X ",
-    " SMX",
-    "XES ",
-    " X  "
+    "  S ",
+    " XES",
+    "SMX ",
+    " S  "
   ],
   "key": {
     "X": {
-      "item": "create:sturdy_sheet"
+      "item": "minecraft:iron_ingot"
     },
     "S": {
-      "item": "create_nanomachines:steel_sheet"
+      "item": "minecraft:dried_kelp"
     },
     "M": {
       "item": "create_nanomachines:hf_motor"
