@@ -8,16 +8,18 @@ import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.core.particles.SimpleParticleType;
 
-public class RedSweepParticle extends TextureSheetParticle {
+public class HFSweepParticle extends TextureSheetParticle {
     private final SpriteSet sprites;
 
-    protected RedSweepParticle(ClientLevel level, double x, double y, double z, SpriteSet sprites) {
+    protected HFSweepParticle(ClientLevel level, double x, double y, double z, SpriteSet sprites) {
         super(level, x, y, z, 0.0D, 0.0D, 0.0D);
+
         this.sprites = sprites;
         this.lifetime = 4;
         this.gravity = 0.0F;
         this.hasPhysics = false;
         this.quadSize = 1.0F;
+
         this.setSpriteFromAge(this.sprites);
     }
 
@@ -45,10 +47,11 @@ public class RedSweepParticle extends TextureSheetParticle {
         }
 
         @Override
-        public Particle createParticle(SimpleParticleType type, ClientLevel level,
+        public Particle createParticle(SimpleParticleType type,
+                                       ClientLevel level,
                                        double x, double y, double z,
                                        double xd, double yd, double zd) {
-            return new RedSweepParticle(level, x, y, z, sprites);
+            return new HFSweepParticle(level, x, y, z, sprites);
         }
     }
 }

@@ -37,37 +37,32 @@ public class ModCreativeModTabs {
                         output.accept(ModItems.NANOMACHINES_HFMOTOR.get());
                         output.accept(ModItems.NANOMACHINES_HFHANDLE.get());
                         output.accept(ModItems.NANOMACHINES_BLADE_PART.get());
+
                         output.accept(ModItems.NANOMACHINES_HEART.get());
 
                         output.accept(ModItems.HF_BLADE.get());
                         output.accept(ModItems.HF_BLADE_PINK.get());
-                        //output.accept(ModItems.HF_BLADE_YELLOW.get());
-                        //output.accept(ModItems.HF_BLADE_WHITE.get());
+                        output.accept(ModItems.HF_BLADE_YELLOW.get());
+                        output.accept(ModItems.HF_BLADE_WHITE.get());
                         output.accept(ModItems.HF_BLADE_RED.get());
-                        //output.accept(ModItems.HF_BLADE_PURPLE.get());
-                        //output.accept(ModItems.HF_BLADE_ORANGE.get());
-                        //output.accept(ModItems.HF_BLADE_MAGENTA.get());
-                        //output.accept(ModItems.HF_BLADE_LIME.get());
-                        //output.accept(ModItems.HF_BLADE_LIGHT_GRAY.get());
-                        //output.accept(ModItems.HF_BLADE_LIGHT_BLUE.get());
+                        output.accept(ModItems.HF_BLADE_PURPLE.get());
+                        output.accept(ModItems.HF_BLADE_ORANGE.get());
+                        output.accept(ModItems.HF_BLADE_MAGENTA.get());
+                        output.accept(ModItems.HF_BLADE_LIME.get());
+                        output.accept(ModItems.HF_BLADE_LIGHT_GRAY.get());
+                        output.accept(ModItems.HF_BLADE_LIGHT_BLUE.get());
                         output.accept(ModItems.HF_BLADE_GREEN.get());
-                        //output.accept(ModItems.HF_BLADE_CYAN.get());
-                        //output.accept(ModItems.HF_BLADE_BROWN.get());
-                        //output.accept(ModItems.HF_BLADE_BLUE.get());
-                        //output.accept(ModItems.HF_BLADE_BLACK.get());
-
-
-
-
+                        output.accept(ModItems.HF_BLADE_CYAN.get());
+                        output.accept(ModItems.HF_BLADE_BROWN.get());
+                        output.accept(ModItems.HF_BLADE_BLUE.get());
+                        output.accept(ModItems.HF_BLADE_BLACK.get());
 
                         output.accept(ModBlocks.BLOOMERY.get());
 
 
                     })
                     .build());
-
     public static void register(IEventBus eventBus) {
         CREATIVE_MODE_TABS.register(eventBus);
     }
-
 }

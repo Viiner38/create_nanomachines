@@ -23,11 +23,6 @@ public class ModBlocks {
     public static final RegistryObject<Block> BLOOMERY = registerBlock("bloomery",
             () -> new BloomeryBlock(BlockBehaviour.Properties.copy(Blocks.STONE).sound(SoundType.NETHERITE_BLOCK).noOcclusion().lightLevel(state -> 0)));
 
-
-
-
-
-
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
         registerBlockItem(name, toReturn);
