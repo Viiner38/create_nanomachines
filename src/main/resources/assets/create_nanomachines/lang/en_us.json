@@ -15,16 +15,12 @@
   "item.create_nanomachines.hf_blade_light_blue": "HF Blade",
   "item.create_nanomachines.hf_blade_brown": "HF Blade",
   "item.create_nanomachines.hf_blade_white": "HF Blade",
-
-
-
-
-
+  "item.create_nanomachines.hf_blade_blue": "HF Blade",
 
   "block.create_nanomachines.bloomery": "Bloomery",
+  "block.create_nanomachines.plasma_cannon": "Plasma Cannon",
 
-  "item.create_nanomachines.coal_dust": "Coal Dust",
-  "item.create_nanomachines.steel_ingot": "Gemsteel",
+  "item.create_nanomachines.steel_ingot": "Gemsteel Ingot",
 
   "item.create_nanomachines.steel_pickaxe": "Steel Pickaxe",
   "item.create_nanomachines.steel_sword": "Steel Sword",
@@ -37,7 +33,9 @@
   "item.create_nanomachines.steel_leggings": "Steel Leggings",
   "item.create_nanomachines.steel_boots": "Steel Boots",
 
-  "item.create_nanomachines.steel_sheet": "Steel Sheet",
+  "item.create_nanomachines.steel_sheet": "Gemsteel Sheet",
+  "item.create_nanomachines.incomplete_blade_part": "Incomplete Blade Part",
+  "item.create_nanomachines.incomplete_hf_motor": "Incomplete HF Motor",
 
   "item.create_nanomachines.hf_motor": "High Frequency Motor",
   "item.create_nanomachines.hf_handle": "HF Blade Handle",
@@ -46,10 +44,24 @@
 
 
 
-  "creativetab.nanomachines_tab": "Create: Nanomachines",
+  "creativetab.nanomachines_tab": "Create: Metal Gear",
 
 
 
   "nanomachines.jei.bloomery_burning": "Bloomery Burning",
-  "nanomachines.jei.bloomery.burn_time": "Burn Time: %s"
+
+
+  "create_nanomachines.ponder.bloomery.sizes.header": "Bloomery configurations",
+  "create_nanomachines.ponder.bloomery.sizes.text_1": "A Bloomery smelts Iron into Gemsteel",
+  "create_nanomachines.ponder.bloomery.sizes.text_2": "Each block in the structure requires 16 Charcoal, 1 Iron and to be lit with a Flint and Steel to start burning",
+  "create_nanomachines.ponder.bloomery.sizes.text_3": "The burn time stays the same regardless of how many bloomeries there are",
+  "create_nanomachines.ponder.bloomery.sizes.text_4": "The largest possible configuration is 9 Bloomeries in a 3x3 grid",
+
+  "create_nanomachines.ponder.bloomery.usage.header": "Using the Bloomery",
+  "create_nanomachines.ponder.bloomery.usage.text_1": "The Bloomery smelts iron into Gem Steel",
+  "create_nanomachines.ponder.bloomery.usage.text_2": "Fill each Bloomery with 16 Charcoal by right-clicking or dropping",
+  "create_nanomachines.ponder.bloomery.usage.text_3": "Then add any Iron variant in the same way",
+  "create_nanomachines.ponder.bloomery.usage.text_4": "To ignite it, use Flint and Steel",
+  "create_nanomachines.ponder.bloomery.usage.text_5": "Place any block above a Bloomery to disable particles for better performance",
+  "create_nanomachines.ponder.bloomery.usage.text_6": "Once smelting is complete, Gemsteel will appear inside"
 }

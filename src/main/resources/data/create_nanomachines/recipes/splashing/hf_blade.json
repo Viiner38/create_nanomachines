@@ -1,0 +1,15 @@
+{
+  "type": "create:splashing",
+  "ingredients": [
+    {
+      "tag": "create_nanomachines:colored_hf"
+    }
+  ],
+  "results": [
+    {
+      "item": "create_nanomachines:hf_blade",
+      "chance": 1,
+      "count": 1
+    }
+  ]
+}

@@ -20,10 +20,8 @@ import javax.annotation.Nonnull;
 
 public class BloomeryCategory implements IRecipeCategory<NanomachinesJEI.BloomeryRecipe> {
 
-    // Create JEI widgets sprite sheet
     private static final ResourceLocation JEI_WIDGETS =
             new ResourceLocation("create", "textures/gui/jei/widgets.png");
-    // JEI_ARROW: UV (19, 10), suurus 42x10, tekstuur 256x256
     private static final int ARROW_U = 19, ARROW_V = 10, ARROW_W = 42, ARROW_H = 10;
 
     private final AnimatedBloomery animatedBloomery = new AnimatedBloomery();
@@ -44,7 +42,6 @@ public class BloomeryCategory implements IRecipeCategory<NanomachinesJEI.Bloomer
         this.background = helper.createBlankDrawable(W, H);
         this.icon  = helper.createDrawableItemStack(new ItemStack(ModBlocks.BLOOMERY.get()));
         this.slot  = helper.getSlotDrawable();
-        // JEI_ARROW Create widgets sprite sheet'ist
         this.arrow = helper.drawableBuilder(JEI_WIDGETS, ARROW_U, ARROW_V, ARROW_W, ARROW_H)
                 .setTextureSize(256, 256)
                 .build();
@@ -84,11 +81,9 @@ public class BloomeryCategory implements IRecipeCategory<NanomachinesJEI.Bloomer
 
         animatedBloomery.draw(graphics, BLOCK_CX, BLOCK_CY, BLOCK_SIZE);
 
-        // Flint & Steel
         graphics.renderItem(new ItemStack(Items.FLINT_AND_STEEL),
                 BLOCK_CX - 8, 67);
 
-        // JEI_ARROW — joondatud vertikaalselt output slotiga (y=36, slot kõrgus 16)
         arrow.draw(graphics, 94, 39);
     }
 }

@@ -1,5 +1,6 @@
 package net.viiner.nanomachines.item;
 
+import com.simibubi.create.content.processing.sequenced.SequencedAssemblyItem;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.item.*;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -7,7 +8,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.viiner.nanomachines.Nanomachines;
-import net.viiner.nanomachines.item.custom.FuelItem;
 import net.viiner.nanomachines.item.custom.HFBladeItem;
 
 public class ModItems {
@@ -73,13 +73,10 @@ public class ModItems {
                     new ArmorItem(ModArmorMaterials.STEEL, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
     public static final RegistryObject<Item> NANOMACHINES_STEELLEGGINGS = ITEMS.register("steel_leggings", () ->
                     new ArmorItem(ModArmorMaterials.STEEL, ArmorItem.Type.LEGGINGS, new Item.Properties()));
-
     public static final RegistryObject<Item> NANOMACHINES_STEELBOOTS = ITEMS.register("steel_boots", () ->
                     new ArmorItem(ModArmorMaterials.STEEL, ArmorItem.Type.BOOTS, new Item.Properties()));
 
     //MATERIALS
-    public static final RegistryObject<Item> NANOMACHINES_COALDUST = ITEMS.register("coal_dust", () ->
-                    new FuelItem(new Item.Properties(), 800));
     public static final RegistryObject<Item> NANOMACHINES_STEEL = ITEMS.register("steel_ingot", () ->
                     new Item(new Item.Properties()));
     public static final RegistryObject<Item> NANOMACHINES_STEELSHEET = ITEMS.register("steel_sheet", () ->
@@ -92,6 +89,10 @@ public class ModItems {
                     new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> NANOMACHINES_BLADE_PART = ITEMS.register("blade_part", () ->
                     new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> NANOMACHINES_INCOMPLETE_BLADE_PART = ITEMS.register("incomplete_blade_part", () ->
+            new SequencedAssemblyItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> NANOMACHINES_INCOMPLETE_HFMOTOR = ITEMS.register("incomplete_hf_motor", () ->
+            new SequencedAssemblyItem(new Item.Properties()));
 
     //NANOMACHINES
     public static final RegistryObject<Item> NANOMACHINES_HEART = ITEMS.register("nm_heart", () ->

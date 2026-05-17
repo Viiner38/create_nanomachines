@@ -19,7 +19,6 @@ public class ModCreativeModTabs {
                     .title(Component.translatable("creativetab.nanomachines_tab"))
                     .displayItems((itemDisplayParameters, output) -> {
 
-                        output.accept(ModItems.NANOMACHINES_COALDUST.get());
                         output.accept(ModItems.NANOMACHINES_STEEL.get());
                         output.accept(ModItems.NANOMACHINES_STEELSHEET.get());
 
@@ -41,10 +40,12 @@ public class ModCreativeModTabs {
                         output.accept(ModItems.NANOMACHINES_HEART.get());
 
                         output.accept(ModItems.HF_BLADE.get());
+                        output.accept(ModItems.HF_BLADE_RED.get());
+
+
                         output.accept(ModItems.HF_BLADE_PINK.get());
                         output.accept(ModItems.HF_BLADE_YELLOW.get());
                         output.accept(ModItems.HF_BLADE_WHITE.get());
-                        output.accept(ModItems.HF_BLADE_RED.get());
                         output.accept(ModItems.HF_BLADE_PURPLE.get());
                         output.accept(ModItems.HF_BLADE_ORANGE.get());
                         output.accept(ModItems.HF_BLADE_MAGENTA.get());

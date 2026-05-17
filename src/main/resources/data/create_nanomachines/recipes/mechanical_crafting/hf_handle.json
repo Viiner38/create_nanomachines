@@ -2,14 +2,14 @@
   "type": "create:mechanical_crafting",
   "acceptMirrored": true,
   "pattern": [
-    "  S ",
-    " XES",
-    "SMX ",
-    " S  "
+    "  X ",
+    " SEX",
+    "XMS ",
+    " X  "
   ],
   "key": {
     "X": {
-      "item": "minecraft:iron_ingot"
+      "item": "create:iron_sheet"
     },
     "S": {
       "item": "minecraft:dried_kelp"

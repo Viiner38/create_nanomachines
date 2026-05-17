@@ -1,0 +1,19 @@
+{
+  "values": [
+    "create_nanomachines:hf_blade_white",
+    "create_nanomachines:hf_blade_light_gray",
+    "create_nanomachines:hf_blade_black",
+    "create_nanomachines:hf_blade_brown",
+    "create_nanomachines:hf_blade_red",
+    "create_nanomachines:hf_blade_orange",
+    "create_nanomachines:hf_blade_yellow",
+    "create_nanomachines:hf_blade_lime",
+    "create_nanomachines:hf_blade_green",
+    "create_nanomachines:hf_blade_cyan",
+    "create_nanomachines:hf_blade_light_blue",
+    "create_nanomachines:hf_blade_blue",
+    "create_nanomachines:hf_blade_purple",
+    "create_nanomachines:hf_blade_magenta",
+    "create_nanomachines:hf_blade_pink"
+  ]
+}

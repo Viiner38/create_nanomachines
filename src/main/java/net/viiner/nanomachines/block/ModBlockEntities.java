@@ -6,6 +6,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import net.viiner.nanomachines.block.bloomery.BloomeryBlockEntity;
 
 
 public class ModBlockEntities {
@@ -20,6 +21,7 @@ public class ModBlockEntities {
                             ModBlocks.BLOOMERY.get()
                     ).build(null)
             );
+
 
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITY_TYPES.register(eventBus);

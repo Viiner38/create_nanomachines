@@ -38,7 +38,6 @@ public class NanomachinesJEI implements IModPlugin {
 
     @Override
     public void registerRecipes(@Nonnull IRecipeRegistration registration) {
-        // Output — asenda ModItems.NANOMACHINES_STEEL oma tegeliku item'iga
         ItemStack steelOutput = new ItemStack(ModItems.NANOMACHINES_STEEL.get());
 
         registration.addRecipes(BLOOMERY_BURNING, List.of(
@@ -49,8 +48,6 @@ public class NanomachinesJEI implements IModPlugin {
         ));
     }
 
-    // See meetod ütleb JEI-le: "Bloomery blokk KASUTAB seda retseptitüüpi"
-    // Ilma selleta ilmub retsept vale koha all
     @Override
     public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.BLOOMERY.get()), BLOOMERY_BURNING);

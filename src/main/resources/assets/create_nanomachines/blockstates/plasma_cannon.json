@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "create_nanomachines:block/plasma_cannon_base"
+    }
+  }
+}

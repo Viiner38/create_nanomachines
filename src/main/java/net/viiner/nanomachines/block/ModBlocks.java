@@ -1,6 +1,8 @@
 package net.viiner.nanomachines.block;
 
+import net.minecraft.world.level.material.MapColor;
 import net.viiner.nanomachines.Nanomachines;
+import net.viiner.nanomachines.block.bloomery.BloomeryBlock;
 import net.viiner.nanomachines.item.ModItems;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -22,6 +24,9 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> BLOOMERY = registerBlock("bloomery",
             () -> new BloomeryBlock(BlockBehaviour.Properties.copy(Blocks.STONE).sound(SoundType.NETHERITE_BLOCK).noOcclusion().lightLevel(state -> 0)));
+
+
+
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
