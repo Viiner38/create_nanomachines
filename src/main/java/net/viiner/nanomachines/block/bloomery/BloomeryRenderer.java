@@ -188,7 +188,7 @@ public class BloomeryRenderer extends SafeBlockEntityRenderer<BloomeryBlockEntit
         if (fireH <= 0.01) return;
 
         RandomSource rng = level.getRandom();
-        int count = (int)(3 * t) + 1;
+        int count = (int)(1.5 * t) + 1;
 
         for (int i = 0; i < count; i++) {
             double px = innerMinX + rng.nextDouble() * (innerMaxX - innerMinX);

@@ -59,6 +59,7 @@ public class ModCreativeModTabs {
                         output.accept(ModItems.HF_BLADE_BLACK.get());
 
                         output.accept(ModBlocks.BLOOMERY.get());
+                        output.accept(ModBlocks.PLASMACANNON.get());
 
 
                     })

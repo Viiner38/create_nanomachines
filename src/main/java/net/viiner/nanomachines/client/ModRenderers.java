@@ -9,6 +9,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.viiner.nanomachines.block.plasmacannon.PlasmaCannonRenderer;
 
 @Mod.EventBusSubscriber(modid = Nanomachines.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ModRenderers {
@@ -19,7 +20,14 @@ public class ModRenderers {
                 ModBlockEntities.BLOOMERY.get(),
                 BloomeryRenderer::new
         );
+
+        event.registerBlockEntityRenderer(
+                ModBlockEntities.PLASMACANNON.get(),
+                PlasmaCannonRenderer::new
+        );
     }
+
+
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         PonderIndex.addPlugin(new BloomeryPonderPlugin());
