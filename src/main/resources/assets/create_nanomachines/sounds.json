@@ -1,0 +1,13 @@
+{
+  "plasma_beam": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "create_nanomachines:plasma_beam",
+        "stream": false,
+        "volume": 0.8,
+        "attenuation_distance": 10
+      }
+    ]
+  }
+}

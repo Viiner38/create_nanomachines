@@ -1,10 +1,6 @@
 package net.viiner.nanomachines.block;
 
-import com.simibubi.create.foundation.data.AssetLookup;
-import com.simibubi.create.foundation.data.SharedProperties;
-import com.simibubi.create.infrastructure.config.CStress;
 import com.tterrag.registrate.util.entry.BlockEntry;
-import net.minecraft.world.level.material.MapColor;
 import net.viiner.nanomachines.Nanomachines;
 import net.viiner.nanomachines.block.bloomery.BloomeryBlock;
 import net.viiner.nanomachines.block.plasmacannon.PlasmaCannonBlock;
@@ -19,13 +15,8 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-
-import java.util.function.Supplier;
-
-import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
-import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 import static net.viiner.nanomachines.block.ModBlockEntities.REGISTRATE;
-
+import java.util.function.Supplier;
 
 public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS =
@@ -34,18 +25,11 @@ public class ModBlocks {
     public static final RegistryObject<Block> BLOOMERY = registerBlock("bloomery",
             () -> new BloomeryBlock(BlockBehaviour.Properties.copy(Blocks.STONE).sound(SoundType.NETHERITE_BLOCK).noOcclusion().lightLevel(state -> 0)));
 
-    public static final BlockEntry<PlasmaCannonBlock> PLASMACANNON = REGISTRATE.block("plasma_cannon", PlasmaCannonBlock::new)
-            .initialProperties(SharedProperties::stone)
-            .transform(pickaxeOnly())
-            .blockstate((c, p) -> p.simpleBlock(c.getEntry(), AssetLookup.partialBaseModel(c, p)))
-            .transform(CStress.setImpact(20))
+    public static final BlockEntry<PlasmaCannonBlock> PLASMACANNON = REGISTRATE
+            .block("plasma_cannon", PlasmaCannonBlock::new)
             .item()
-            .transform(customItemModel())
+            .build()
             .register();
-
-
-
-
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
@@ -59,5 +43,8 @@ public class ModBlocks {
 
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
+    }
+    public static Item.Properties defaultItemProps() {
+        return new Item.Properties();
     }
 }

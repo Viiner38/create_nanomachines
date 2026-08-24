@@ -1,7 +1,34 @@
 {
-  "variants": {
-    "": {
-      "model": "create_nanomachines:block/plasma_cannon_base"
-    }
-  }
+  "multipart": [
+    {"when": {"facing": "south"}, "apply": {"model": "create_nanomachines:block/plasma_cannon_base", "x": 90, "y": 180}},
+    {"when": {"facing": "south"}, "apply": {"model": "create_nanomachines:block/plasma_cannon_glass", "x": 90, "y": 180}},
+
+    {"when": {"facing": "north"}, "apply": {"model": "create_nanomachines:block/plasma_cannon_base", "x": 90}},
+    {"when": {"facing": "north"}, "apply": {"model": "create_nanomachines:block/plasma_cannon_glass", "x": 90}},
+
+    {"when": {"facing": "east"},  "apply": {"model": "create_nanomachines:block/plasma_cannon_base", "x": 90, "y": 90}},
+    {"when": {"facing": "east"},  "apply": {"model": "create_nanomachines:block/plasma_cannon_glass", "x": 90, "y": 90}},
+
+    {"when": {"facing": "west"},  "apply": {"model": "create_nanomachines:block/plasma_cannon_base", "x": 90, "y": 270}},
+    {"when": {"facing": "west"},  "apply": {"model": "create_nanomachines:block/plasma_cannon_glass", "x": 90, "y": 270}},
+
+    {"when": {"facing": "up"},   "apply": {"model": "create_nanomachines:block/plasma_cannon_base"}},
+    {"when": {"facing": "up"},   "apply": {"model": "create_nanomachines:block/plasma_cannon_glass"}},
+
+    {"when": {"facing": "down"}, "apply": {"model": "create_nanomachines:block/plasma_cannon_base",  "x": 180}},
+    {"when": {"facing": "down"}, "apply": {"model": "create_nanomachines:block/plasma_cannon_glass", "x": 180}}
+  ]
+}
+
+
+
+
+
+
+
+
+"facing=west,waterlogged=false": {
+"model": "create:block/mechanical_drill/block",
+"x": 90,
+"y": 270
 }

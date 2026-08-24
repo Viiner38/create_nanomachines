@@ -21,8 +21,8 @@ public class ModItemTagGenerator extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider pProvider) {
-            this.tag(ItemTags.TRIMMABLE_ARMOR)
-                    .add(ModItems.NANOMACHINES_STEELHELMET.get(),
+            this.tag(ItemTags.TRIMMABLE_ARMOR).add(
+                            ModItems.NANOMACHINES_STEELHELMET.get(),
                             ModItems.NANOMACHINES_STEELCHESTPLATE.get(),
                             ModItems.NANOMACHINES_STEELLEGGINGS.get(),
                             ModItems.NANOMACHINES_STEELBOOTS.get());

@@ -255,7 +255,6 @@ public class BloomeryBlockEntity extends SmartBlockEntity {
                 yield collect(nw, nw.east(), nw.south(), nw.south().east());
             }
             case BOWL_3X3 -> {
-                // Find C_NW corner (NW part of 3x3 = top-left = smallest X, smallest Z)
                 BlockPos cnw = switch (part) {
                     case NW -> worldPosition;
                     case N  -> worldPosition.west();

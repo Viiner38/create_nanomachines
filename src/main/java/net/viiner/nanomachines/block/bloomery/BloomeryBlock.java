@@ -277,13 +277,6 @@ public class BloomeryBlock extends Block implements EntityBlock {
         };
     }
 
-    /**
-     * A block can join a structure formation if:
-     * - It is a BloomeryBlock, AND
-     * - It is SINGLE (free), OR
-     * - It is already correctly placed as expectedType+expectedPart, OR
-     * - The requesting structure has HIGHER priority than the block's current structure
-     */
     private boolean canJoin(Level level, BlockPos pos,
                             StructureType requestingType, BowlPart expectedPart) {
         BlockState st = level.getBlockState(pos);
@@ -292,13 +285,8 @@ public class BloomeryBlock extends Block implements EntityBlock {
         StructureType currentType = st.getValue(STRUCTURE);
         BowlPart currentPart = st.getValue(PART);
 
-        // Free block
         if (currentType == StructureType.SINGLE) return true;
-
-        // Already correctly placed
         if (currentType == requestingType && currentPart == expectedPart) return true;
-
-        // Higher priority can override lower
         return getPriority(requestingType) > getPriority(currentType);
     }
 

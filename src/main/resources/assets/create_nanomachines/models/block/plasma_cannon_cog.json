@@ -1,10 +1,10 @@
 {
   "format_version": "1.9.0",
   "credit": "Made with Blockbench",
-  "parent": "create:block/large_wheels",
+  "parent": "minecraft:block/block",
   "texture_size": [32, 32],
   "textures": {
-    "4": "plasma_cannon_cog",
+    "4": "create_nanomachines:block/plasma_cannon_cog",
     "particle": "block/stripped_spruce_log_top"
   },
   "elements": [
@@ -80,7 +80,7 @@
     },
     {
       "name": "GearCaseOuter",
-      "from": [4, 5, 4],
+      "from": [4, 4.5, 4],
       "to": [12, 9, 12],
       "rotation": {"angle": 0, "axis": "y", "origin": [0, -1, 0]},
       "faces": {

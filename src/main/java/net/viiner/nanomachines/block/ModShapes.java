@@ -7,22 +7,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
 import java.util.function.BiFunction;
-
 import static net.minecraft.core.Direction.UP;
 
 public class ModShapes {
 
-
-
-    public static final VoxelShape PLASMACANNON = shape(0, 0, 0, 16, 2, 16)
-            .add(1, 2, 1, 15, 3, 15)
-            .add(0, 3, 0, 16, 5, 16)
-            .add(0, 9, 0, 16, 11, 16)
-            .add(0, 11, 0, 16, 16, 16)
-            .add(5, 11, 5, 11, 14, 11)
-            .build();
+    public static final VoxelShape PLASMACANNON = Block.box(0, 0, 0, 16, 16, 16);
 
     private static Builder shape(VoxelShape shape) {
         return new Builder(shape);
@@ -82,7 +72,5 @@ public class ModShapes {
         public VoxelShaper forDirectional() {
             return forDirectional(UP);
         }
-
     }
-
 }

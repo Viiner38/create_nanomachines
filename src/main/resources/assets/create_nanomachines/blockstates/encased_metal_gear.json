@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "axis=x,top=false": { "model": "create_nanomachines:block/encased_metal_gear", "x": 90, "y": 90 },
+    "axis=x,top=true":  { "model": "create_nanomachines:block/encased_metal_gear_top", "x": 90, "y": 90 },
+    "axis=y,top=false": { "model": "create_nanomachines:block/encased_metal_gear" },
+    "axis=y,top=true":  { "model": "create_nanomachines:block/encased_metal_gear_top" },
+    "axis=z,top=false": { "model": "create_nanomachines:block/encased_metal_gear", "x": 90 },
+    "axis=z,top=true":  { "model": "create_nanomachines:block/encased_metal_gear_top", "x": 90 }
+  }
+}

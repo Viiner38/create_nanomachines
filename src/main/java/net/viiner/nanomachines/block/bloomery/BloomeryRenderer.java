@@ -136,11 +136,6 @@ public class BloomeryRenderer extends SafeBlockEntityRenderer<BloomeryBlockEntit
 
     // ── Fire particles ───────────────────────────────────────────────────────────
 
-    /**
-     * Computes particle spawn bounds for this block, extending to cover the wall
-     * gap on any side that borders another bloomery block in the same multiblock.
-     * This eliminates the visible gap between adjacent blocks.
-     */
     private void spawnFireParticles(BloomeryBlockEntity be,
                                     BloomeryBlock.BowlPart part,
                                     BloomeryBlock.StructureType structure,
@@ -160,14 +155,11 @@ public class BloomeryRenderer extends SafeBlockEntityRenderer<BloomeryBlockEntit
         }
         if (t < 0.01f) return;
 
-        // Determine which sides have a bloomery neighbour — extend bound to 0/1
-        // so the gap between blocks is filled seamlessly.
         boolean openWest  = isBloomeryNeighbour(level, pos, -1, 0);
         boolean openEast  = isBloomeryNeighbour(level, pos,  1, 0);
         boolean openNorth = isBloomeryNeighbour(level, pos,  0, -1);
         boolean openSouth = isBloomeryNeighbour(level, pos,  0,  1);
 
-        // Base bounds respect walls; open sides stretch to block edge (0 or 1).
         float minX = openWest  ? 0f : WALL;
         float maxX = openEast  ? 1f : 1f - WALL;
         float minZ = openNorth ? 0f : WALL;
@@ -203,7 +195,6 @@ public class BloomeryRenderer extends SafeBlockEntityRenderer<BloomeryBlockEntit
         }
     }
 
-    /** Returns true if the block at (pos + dx, pos.y, pos + dz) is also a BloomeryBlock. */
     private boolean isBloomeryNeighbour(ClientLevel level, BlockPos pos, int dx, int dz) {
         return level.getBlockState(pos.offset(dx, 0, dz)).getBlock() instanceof BloomeryBlock;
     }

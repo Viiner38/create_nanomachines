@@ -81,6 +81,8 @@ public class ModItems {
                     new Item(new Item.Properties()));
     public static final RegistryObject<Item> NANOMACHINES_STEELSHEET = ITEMS.register("steel_sheet", () ->
                     new Item(new Item.Properties()));
+    public static final RegistryObject<Item> NANOMACHINES_LENS = ITEMS.register("crystal_lens", () ->
+            new Item(new Item.Properties()));
 
     //SWORD PARTS
     public static final RegistryObject<Item> NANOMACHINES_HFMOTOR = ITEMS.register("hf_motor", () ->
@@ -97,7 +99,6 @@ public class ModItems {
     //NANOMACHINES
     public static final RegistryObject<Item> NANOMACHINES_HEART = ITEMS.register("nm_heart", () ->
                     new Item(new Item.Properties().rarity(Rarity.EPIC)));
-
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "blocks",
+  "key": {
+    "X": {"item": "create_nanomachines:crystal_lens"},
+    "B": {"item": "minecraft:nether_star"},
+    "C": {"item": "create:brass_ingot"},
+    "G": {"item": "minecraft:glass"},
+    "O": {"item": "minecraft:obsidian"}
+  },
+  "pattern": [
+    "GXG",
+    "CBC",
+    "OCO"
+  ],
+  "result": {
+    "item": "create_nanomachines:plasma_cannon"
+  },
+  "show_notification": true
+}

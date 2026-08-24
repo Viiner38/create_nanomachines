@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "X": {"item": "create:iron_sheet"},
+    "B": {"item": "minecraft:amethyst_shard"}
+  },
+  "pattern": [
+    " X ",
+    " B ",
+    " X "
+  ],
+  "result": {
+    "item": "create_nanomachines:crystal_lens"
+  }
+}

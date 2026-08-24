@@ -15,7 +15,6 @@ public class BloomeryPonderPlugin implements PonderPlugin {
     @Override
     public void registerScenes(PonderSceneRegistrationHelper<ResourceLocation> helper) {
         helper.forComponents(new ResourceLocation(Nanomachines.MOD_ID, "bloomery"))
-                .addStoryBoard("bloomery/sizes", BloomeryScenes::sizes)
-                .addStoryBoard("bloomery/usage", BloomeryScenes::usage);
+                .addStoryBoard("bloomery/bloomery", BloomeryScenes::sizes);
     }
 }

@@ -24,19 +24,19 @@ public class AnimatedBloomery {
     private static final ResourceLocation CHARCOAL_KEY =
             new ResourceLocation("create_nanomachines", "block/burning_bloomery_charcoal_layer");
 
-    // Create JEI shadow — sama sprite sheet mis Create kasutab
+
     private static final ResourceLocation JEI_WIDGETS =
             new ResourceLocation("create", "textures/gui/jei/widgets.png");
-    // JEI_SHADOW: UV (0, 56), suurus 52x11, tekstuur 256x256
+
     private static final int SHADOW_U = 0, SHADOW_V = 56, SHADOW_W = 52, SHADOW_H = 11;
 
-    // Sama mis BloomeryRenderer.java
+
     private static final float WALL      = 2f / 16f;
     private static final float FLOOR_Y   = 2f / 16f;
     private static final float SURFACE_Y = FLOOR_Y + (15f / 16f - FLOOR_Y) * 0.85f;
 
     public void draw(GuiGraphics graphics, int cx, int cy, int blockSize) {
-        // 1. Vari bloki all (Create JEI_SHADOW sprite)
+
         float shadowScale = blockSize / 50f;
         int   sw = (int)(SHADOW_W * shadowScale);
         int   sh = (int)(SHADOW_H * shadowScale);
@@ -47,7 +47,6 @@ public class AnimatedBloomery {
         graphics.blit(JEI_WIDGETS, sx, sy, sw, sh, SHADOW_U, SHADOW_V, SHADOW_W, SHADOW_H, 256, 256);
         RenderSystem.disableBlend();
 
-        // 2. Blokk + charcoal layer
         draw3DBlock(graphics, cx, cy, blockSize);
     }
 
@@ -61,7 +60,6 @@ public class AnimatedBloomery {
         ms.scale(scale, -scale, scale);
         ms.translate(-0.5, -0.5, -0.5);
 
-        // Charcoal layer ENNE bloki seinu
         try {
             TextureAtlasSprite spr = Minecraft.getInstance()
                     .getModelManager()
@@ -94,7 +92,6 @@ public class AnimatedBloomery {
             buf.endBatch();
         } catch (Exception ignored) {}
 
-        // Bloki mudel (seinad renderdatakse charcoal peale)
         MultiBufferSource.BufferSource buf = graphics.bufferSource();
         Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
                 STATE, ms, buf,
