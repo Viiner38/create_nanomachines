@@ -33,15 +33,13 @@ public class PlasmaCannonClient {
         for (ClientBeamTracker.BeamState s : ClientBeamTracker.BEAMS.values()) {
             if (!s.dimension.equals(level.dimension()) || s.length <= 0) continue;
             var rand = level.random;
-            int count = Math.min(18, 3 + s.length / 3);
-            for (int i = 0; i < count; i++) {
-                double t = 0.4 + rand.nextDouble() * s.length;
-                double x = s.origin.getX() + 0.5 + s.facing.getStepX() * t + (rand.nextDouble() - 0.5) * 0.28;
-                double y = s.origin.getY() + 0.5 + s.facing.getStepY() * t + (rand.nextDouble() - 0.5) * 0.28;
-                double z = s.origin.getZ() + 0.5 + s.facing.getStepZ() * t + (rand.nextDouble() - 0.5) * 0.28;
-                int variant = rand.nextInt(3);
-                level.addParticle(new PlasmaLightningOptions(s.color, variant), true, x, y, z, 0, 0, 0);
-            }
+            if (rand.nextInt(2) != 0) continue;
+
+            double t = 0.4 + rand.nextDouble() * s.length;
+            double x = s.origin.getX() + 0.5 + s.facing.getStepX() * t + (rand.nextDouble() - 0.5) * 0.14;
+            double y = s.origin.getY() + 0.5 + s.facing.getStepY() * t + (rand.nextDouble() - 0.5) * 0.14;
+            double z = s.origin.getZ() + 0.5 + s.facing.getStepZ() * t + (rand.nextDouble() - 0.5) * 0.14;
+            level.addParticle(new PlasmaLightningOptions(s.color, rand.nextInt(3)), true, x, y, z, 0, 0, 0);
         }
     }
 

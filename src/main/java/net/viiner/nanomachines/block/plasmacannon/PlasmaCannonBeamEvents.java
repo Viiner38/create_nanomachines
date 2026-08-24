@@ -51,22 +51,9 @@ public class PlasmaCannonBeamEvents {
             ms.translate(pos.getX() - cam.x, pos.getY() - cam.y, pos.getZ() - cam.z);
             PlasmaCannonRenderer.renderBeam(state, event.getPartialTick(), ms, buf);
             ms.popPose();
-
-            double tipX = pos.getX() + 0.5 + state.facing.getStepX() * (state.length + 0.5);
-            double tipY = pos.getY() + 0.5 + state.facing.getStepY() * (state.length + 0.5);
-            double tipZ = pos.getZ() + 0.5 + state.facing.getStepZ() * (state.length + 0.5);
-            int col = state.color;
-            float r = ((col >> 16) & 0xFF) / 255f * 0.75f + 0.25f;
-            float g = ((col >> 8) & 0xFF) / 255f * 0.75f + 0.25f;
-            float b = (col & 0xFF) / 255f * 0.75f + 0.25f;
-            ms.pushPose();
-            ms.translate(tipX - cam.x, tipY - cam.y, tipZ - cam.z);
-            PlasmaCannonRenderer.renderEndCap(ms, buf, r, g, b);
-            ms.popPose();
         }
 
         buf.endBatch(RenderType.beaconBeam(PlasmaCannonRenderer.BEAM_TEXTURE, false));
         buf.endBatch(RenderType.beaconBeam(PlasmaCannonRenderer.BEAM_TEXTURE, true));
-        buf.endBatch(RenderType.lightning());
     }
 }

@@ -6,7 +6,6 @@ import net.viiner.nanomachines.block.ModBlocks;
 import net.viiner.nanomachines.client.ModColors;
 import net.viiner.nanomachines.item.ModCreativeModTabs;
 import net.viiner.nanomachines.item.ModItems;
-import net.viiner.nanomachines.item.ModParticles;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -33,22 +32,19 @@ public class Nanomachines
 
         ModCreativeModTabs.register(modEventBus);
         ModItems.register(modEventBus);
-        ModParticles.register(modEventBus);
+        net.viiner.nanomachines.item.ModParticles.register(modEventBus);
+        net.viiner.nanomachines.particle.ModParticles.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModBlockEntities.register(modEventBus);
         REGISTRATE.registerEventListeners(modEventBus);
         ModSounds.register(modEventBus);
 
-
         modEventBus.addListener(this::commonSetup);
-
-        // ── Plasma Cannon block/item colour tinting (client-only, safe on server) ──
         modEventBus.addListener(ModColors::onRegisterBlockColors);
         modEventBus.addListener(ModColors::onRegisterItemColors);
+        modEventBus.addListener(this::addCreative);
 
         MinecraftForge.EVENT_BUS.register(this);
-
-        modEventBus.addListener(this::addCreative);
 
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }

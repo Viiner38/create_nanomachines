@@ -6,11 +6,11 @@ import com.mojang.math.Axis;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BeaconRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -19,12 +19,14 @@ import net.minecraft.world.phys.AABB;
 import net.viiner.nanomachines.Nanomachines;
 import net.viiner.nanomachines.block.ModPartialModels;
 import net.viiner.nanomachines.client.ClientBeamTracker;
-import org.joml.Matrix4f;
 
 public class PlasmaCannonRenderer extends KineticBlockEntityRenderer<PlasmaCannonBlockEntity> {
 
     public static final ResourceLocation BEAM_TEXTURE =
             new ResourceLocation(Nanomachines.MOD_ID, "textures/block/laser_beam.png");
+
+    private static final float BEAM_RADIUS = 0.4375f;
+    private static final float GLOW_RADIUS = 0.5f;
 
     public PlasmaCannonRenderer(BlockEntityRendererProvider.Context context) {
         super(context);
@@ -60,53 +62,70 @@ public class PlasmaCannonRenderer extends KineticBlockEntityRenderer<PlasmaCanno
     public static void renderBeam(ClientBeamTracker.BeamState state, float partialTicks,
                                   PoseStack ms, MultiBufferSource buffer) {
         int len = state.length;
-        if (len < 0) return;
+        if (len <= 0) return;
 
         Direction facing = state.facing;
         int col = state.color;
-        float r = ((col >> 16) & 0xFF) / 255f;
-        float g = ((col >> 8) & 0xFF) / 255f;
-        float b = (col & 0xFF) / 255f;
-        r = r * 0.75f + 0.25f;
-        g = g * 0.75f + 0.25f;
-        b = b * 0.75f + 0.25f;
+        float r = ((col >> 16) & 0xFF) / 255f * 0.75f + 0.25f;
+        float g = ((col >> 8) & 0xFF) / 255f * 0.75f + 0.25f;
+        float b = (col & 0xFF) / 255f * 0.75f + 0.25f;
 
-        if (len > 0) {
-            ms.pushPose();
-            alignToFacing(ms, facing);
-            switch (facing) {
-                case UP -> ms.translate(0, 1, 0);
-                case DOWN -> ms.translate(0, 0, -1);
-                case SOUTH -> ms.translate(0, 1, -1);
-                case EAST -> ms.translate(-1, 1, 0);
-                default -> {}
-            }
-            BeaconRenderer.renderBeaconBeam(
-                    ms, buffer, BEAM_TEXTURE, partialTicks, 1.0f, 0L, 0, len,
-                    new float[]{r, g, b}, 0.4375f, 0.5f
-            );
-            ms.popPose();
+        ms.pushPose();
+        alignToFacing(ms, facing);
+        switch (facing) {
+            case UP -> ms.translate(0, 1, 0);
+            case DOWN -> ms.translate(0, 0, -1);
+            case SOUTH -> ms.translate(0, 1, -1);
+            case EAST -> ms.translate(-1, 1, 0);
+            default -> {}
         }
+
+        BeaconRenderer.renderBeaconBeam(
+                ms, buffer, BEAM_TEXTURE, partialTicks, 1.0f, 0L, 0, len,
+                new float[]{r, g, b}, BEAM_RADIUS, GLOW_RADIUS
+        );
+
+        ms.pushPose();
+        ms.translate(0.5, 0, 0.5);
+        PoseStack.Pose pose = ms.last();
+        VertexConsumer solid = buffer.getBuffer(RenderType.beaconBeam(BEAM_TEXTURE, false));
+        renderCap(pose, solid, r, g, b, 1.0f, 0, BEAM_RADIUS);
+        renderCap(pose, solid, r, g, b, 1.0f, len, BEAM_RADIUS);
+        VertexConsumer glow = buffer.getBuffer(RenderType.beaconBeam(BEAM_TEXTURE, true));
+        renderCap(pose, glow, r, g, b, 0.3f, 0, GLOW_RADIUS);
+        renderCap(pose, glow, r, g, b, 0.3f, len, GLOW_RADIUS);
+        ms.popPose();
+
+        ms.popPose();
     }
 
-    public static void renderEndCap(PoseStack ms, MultiBufferSource buffer, float r, float g, float b) {
-        ms.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
-        VertexConsumer vc = buffer.getBuffer(RenderType.lightning());
-        Matrix4f m = ms.last().pose();
-        float s = 0.55f;
-        quad(vc, m, -s, -s, s, -s, s, s, -s, s, r, g, b, 1f);
-        float s2 = 0.28f;
-        quad(vc, m, -s2, -s2, s2, -s2, s2, s2, -s2, s2, 1f, 1f, 1f, 1f);
+    private static void renderCap(PoseStack.Pose pose, VertexConsumer vc,
+                                  float r, float g, float b, float a,
+                                  float y, float rad) {
+        capQuad(pose, vc, r, g, b, a, y, -rad, -rad, -rad, rad, rad, rad, rad, -rad);
+        capQuad(pose, vc, r, g, b, a, y, rad, -rad, rad, rad, -rad, rad, -rad, -rad);
     }
 
-    private static void quad(VertexConsumer vc, Matrix4f m,
-                             float x1, float y1, float x2, float y2,
-                             float x3, float y3, float x4, float y4,
-                             float r, float g, float b, float a) {
-        vc.vertex(m, x1, y1, 0).color(r, g, b, a).endVertex();
-        vc.vertex(m, x2, y2, 0).color(r, g, b, a).endVertex();
-        vc.vertex(m, x3, y3, 0).color(r, g, b, a).endVertex();
-        vc.vertex(m, x4, y4, 0).color(r, g, b, a).endVertex();
+    private static void capQuad(PoseStack.Pose pose, VertexConsumer vc,
+                                float r, float g, float b, float a, float y,
+                                float x1, float z1, float x2, float z2,
+                                float x3, float z3, float x4, float z4) {
+        capVertex(pose, vc, r, g, b, a, y, x1, z1, 0f, 0f);
+        capVertex(pose, vc, r, g, b, a, y, x2, z2, 0f, 1f);
+        capVertex(pose, vc, r, g, b, a, y, x3, z3, 1f, 1f);
+        capVertex(pose, vc, r, g, b, a, y, x4, z4, 1f, 0f);
+    }
+
+    private static void capVertex(PoseStack.Pose pose, VertexConsumer vc,
+                                  float r, float g, float b, float a,
+                                  float y, float x, float z, float u, float v) {
+        vc.vertex(pose.pose(), x, y, z)
+                .color(r, g, b, a)
+                .uv(u, v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(15728880)
+                .normal(pose.normal(), 0f, 1f, 0f)
+                .endVertex();
     }
 
     public static AABB beamAabb(BlockPos origin, Direction d, int len) {

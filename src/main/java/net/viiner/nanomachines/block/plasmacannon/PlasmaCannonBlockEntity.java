@@ -22,9 +22,9 @@ import java.util.List;
 public class PlasmaCannonBlockEntity extends KineticBlockEntity {
 
     public static final float MAX_RPM = 256f;
-    public static final int BEAM_RANGE = 32;
+    public static final int BEAM_RANGE = 256;
     private static final int WARMUP_TICKS = 10;
-    private static final float DAMAGE_PER_SEC = 3.0f;
+    private static final float DAMAGE_PER_SEC = 7.0f;
     private static final float BREAK_HARDNESS_PER_SEC = 4.0f;
 
     private int warmupTimer = 0;

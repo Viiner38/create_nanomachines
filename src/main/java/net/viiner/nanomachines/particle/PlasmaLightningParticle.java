@@ -17,8 +17,8 @@ public class PlasmaLightningParticle extends TextureSheetParticle {
         this.zd = 0;
         this.hasPhysics = false;
         this.gravity = 0;
-        this.lifetime = 4 + this.random.nextInt(5);
-        this.quadSize = 0.4f + this.random.nextFloat() * 0.45f;
+        this.lifetime = 3 + this.random.nextInt(4);
+        this.quadSize = 0.14f + this.random.nextFloat() * 0.10f;
         this.roll = this.random.nextFloat() * (float) Math.PI;
         this.oRoll = this.roll;
 
@@ -28,7 +28,7 @@ public class PlasmaLightningParticle extends TextureSheetParticle {
         this.rCol = r * 0.7f + 0.3f;
         this.gCol = g * 0.7f + 0.3f;
         this.bCol = b * 0.7f + 0.3f;
-        this.alpha = 0.95f;
+        this.alpha = 0.9f;
         this.setSprite(sprites.get(Math.floorMod(variant, 3), 3));
     }
 
@@ -42,8 +42,8 @@ public class PlasmaLightningParticle extends TextureSheetParticle {
             return;
         }
         float t = 1f - (float) this.age / this.lifetime;
-        this.alpha = 0.95f * t;
-        this.quadSize *= 0.96f;
+        this.alpha = 0.9f * t;
+        this.quadSize *= 0.95f;
     }
 
     @Override
